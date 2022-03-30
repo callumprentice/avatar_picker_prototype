@@ -1,0 +1,305 @@
+body {
+    margin: 0;
+    display: block;
+    font-family: 'Roboto';
+    font-size: 1em;
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+}
+
+#male,
+#female {
+    position: absolute;
+    width: 60px;
+    height: 20px;
+    border-radius: 60px;
+    margin: 8px;
+    vertical-align: top;
+    text-align: center;
+    padding: 16px;
+    top: 8px;
+}
+
+#male {
+    left: 8px;
+    background-color: rgba(141, 186, 206, 0.5);
+    border: rgba(70, 93, 103, 0.75) 2px solid;
+}
+#female {
+    left: 110px;
+    background-color: rgba(255, 110, 199, 0.5);
+    border: rgba(128, 55, 100, 0.75) 2px solid;
+}
+#male:hover {
+    background-color: rgba(141, 186, 206, 0.8);
+}
+#female:hover {
+    background-color: rgba(255, 110, 199, 0.8);
+}
+
+#malehead1,
+#malehead2,
+#malebody1,
+#malebody2,
+#maleskin1,
+#maleskin2,
+#maleshirt1,
+#maleshirt2,
+#malepants1,
+#malepants2,
+#femalehead1,
+#femalehead2,
+#femalebody1,
+#femalebody2,
+#femaleskin1,
+#femaleskin2,
+#femaleshirt1,
+#femaleshirt2,
+#femalepants1,
+#femalepants2 {
+    position: absolute;
+    width: 60px;
+    height: 20px;
+    border-radius: 60px;
+    margin: 8px;
+    text-align: center;
+    vertical-align: top;
+    padding: 16px;
+}
+
+#maleshirtrem,
+#malepantsrem,
+#femaleshirtrem,
+#femalepantsrem {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 20px;
+    margin: 8px;
+    text-align: center;
+    vertical-align: top;
+    padding: 16px;
+    padding-left: 2px;
+    padding-right: 2px;
+    border: rgba(100, 0, 0, 0.5) 2px solid;
+    background-color: rgba(255, 100, 100, 0.5);
+}
+
+#malehead1,
+#malehead2,
+#malebody1,
+#malebody2,
+#maleskin1,
+#maleskin2,
+#maleshirt1,
+#maleshirt2,
+#malepants1,
+#malepants2 {
+    border: rgba(70, 93, 103, 0.75) 2px solid;
+    background-color: rgba(141, 186, 206, 0.5);
+}
+
+#malehead1:hover,
+#malehead2:hover,
+#malebody1:hover,
+#malebody2:hover,
+#maleskin1:hover,
+#maleskin2:hover,
+#maleshirt1:hover,
+#maleshirt2:hover,
+#malepants1:hover,
+#malepants2:hover {
+    background-color: rgba(141, 186, 206, 0.8);
+}
+
+#maleshirtrem:hover,
+#malepantsrem:hover,
+#femaleshirtrem:hover,
+#femalepantsrem:hover {
+    background-color: rgba(255, 100, 100, 0.8);
+}
+
+
+
+#malehead1,
+#malebody1,
+#maleskin1,
+#maleshirt1,
+#malepants1 {
+    left: 8px;
+}
+#malehead2,
+#malebody2,
+#maleskin2,
+#maleshirt2,
+#malepants2 {
+    left: 110px;
+}
+
+#malebody1,
+#malebody2,
+#femalebody1,
+#femalebody2 {
+    top: 80px;
+}
+#malehead1,
+#malehead2,
+#femalehead1,
+#femalehead2 {
+    top: 152px;
+}
+#maleskin1,
+#maleskin2,
+#femaleskin1,
+#femaleskin2 {
+    top: 224px;
+}
+#maleshirt1,
+#maleshirt2,
+#maleshirtrem,
+#femaleshirt1,
+#femaleshirt2,
+#femaleshirtrem {
+    top: 296px;
+}
+#malepants1,
+#malepants2,
+#malepantsrem,
+#femalepants1,
+#femalepants2,
+#femalepantsrem {
+    top: 368px;
+}
+
+#maleshirtrem,
+#femaleshirtrem,
+#malepantsrem,
+#femalepantsrem {
+    left: 216px;
+}
+
+#femalehead1,
+#femalehead2,
+#femalebody1,
+#femalebody2,
+#femaleskin1,
+#femaleskin2,
+#femaleshirt1,
+#femaleshirt2,
+#femalepants1,
+#femalepants2 {
+    border: rgba(128, 55, 100, 0.75) 2px solid;
+    background-color: rgba(255, 110, 199, 0.5);
+}
+
+#femalehead1:hover,
+#femalehead2:hover,
+#femalebody1:hover,
+#femalebody2:hover,
+#femaleskin1:hover,
+#femaleskin2:hover,
+#femaleshirt1:hover,
+#femaleshirt2:hover,
+#femalepants1:hover,
+#femalepants2:hover {
+    background-color: rgba(255, 110, 199, 0.8);
+}
+
+#femalehead1,
+#femalebody1,
+#femaleskin1,
+#femaleshirt1,
+#femalepants1 {
+    left: 8px;
+}
+#femalehead2,
+#femalebody2,
+#femaleskin2,
+#femaleshirt2,
+#femalepants2 {
+    left: 110px;
+}
+
+
+
+#continue {
+    position: absolute;
+    width: 200px;
+    height: 20px;
+    border-radius: 60px;
+    border: 1px #666 solid;
+    margin: 8px;
+    vertical-align: top;
+    padding: 16px;
+    padding-top: 12px;
+    top: 440px;
+    left: 8px;
+    text-align: center;
+    background-color: rgba(50, 150, 50, 0.65);
+    font-size: 1.5em;
+}
+#continue:hover {
+    background-color: rgba(50, 150, 50, 0.8);
+}
+
+.visible {
+    visibility: visible;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+#loading_overlay {
+    background-color: #3366aa;
+    position: absolute;
+    font-size: 16px;
+    z-index: 25;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    display: flex;
+}
+
+.load-spinner {
+    display: inline-block;
+    position: relative;
+    width: 256px;
+    height: 256px;
+    text-align: center;
+    color: white;
+    font-family: monospace;
+    font-size: 5em;
+}
+.load-spinner:after {
+    content: ' ';
+    display: block;
+    border-radius: 50%;
+    width: 0;
+    height: 0;
+    margin: 8px;
+    box-sizing: border-box;
+    border: 128px solid #fff;
+    border-color: #f99 transparent #9f9 transparent;
+    animation: load-spinner 1.2s infinite;
+}
+@keyframes load-spinner {
+    0% {
+        transform: rotate(0);
+        animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    }
+    50% {
+        transform: rotate(900deg);
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    100% {
+        transform: rotate(1800deg);
+    }
+}
