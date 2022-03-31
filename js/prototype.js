@@ -9,15 +9,14 @@
  */
 
 //WEDNESDAY:
-// * Extend loading to include items and skins too
-// push textures into a map like we do in original.js
+// * Create animation groups - see how it works in original first
 // * Add in code to show/hide as per first prototype
 // * Try to factor preloadStartData and loadMainData into single function
-// only enable onscreen buttons when everything is loaded
-// alternatively, start enabled and load item using same pattern as
-// the initial loads - may or may not be ready but that's okay although
-// i do need to check if it's already loaded yet - reinstante "loaded" flag?
-// only enable proceed when a full "set" is selected (body, shirt, pants) - what else?
+// * only enable onscreen buttons when everything is loaded
+//     * alternatively, start enabled and load item using same pattern as
+//       the initial loads - may or may not be ready but that's okay although
+//     * i do need to check if it's already loaded yet - reinstante "loaded" flag?
+// * only enable proceed when a full "set" is selected (body, shirt, pants) - what else?
 
 import * as THREE from "./three.module.js";
 import { OrbitControls } from "./OrbitControls.js";
