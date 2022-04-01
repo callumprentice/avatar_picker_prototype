@@ -11,17 +11,7 @@
 /*
  ============================== TODO ==============================
 
-* Problem - each item of clothing needs to be associated with
-  a body or else you end up with (for example) male_pants_2 present for each possible body
-  Consider combining names with selected body and item name?
 
-* Display current:
-    body name
-    shirt name
-    pants name
-    -- int HTML on top right
-
-* Once initial set is loaded and interactive, load everything else
 
 * Disable body/head changes until rest of bodies loaded
     * Tricky because of async nature
@@ -29,27 +19,20 @@
 * implement skins
     * consider loading 3 skins and attaching to userData in body
 
-* define inital body name in JSON vs code (let initial_name = "male_body_1_head_1";)
+* define initial body name in JSON vs code (let initial_name = "male_body_1_head_1";)
     * also define defaultState() in JSON
 
 * add code to produce JSON blob of INV data (see original.js)
-
-* can bodies share items (shirts etc.) - if so, we should only load once
-
-* write functions to select body based on nody and head
-    * Compose a name based on selection and then use setBodyByName (see original)
 
 * only enable proceed when a full "set" is selected (body, shirt, pants) - what else?
 
 * conside other items
     * hair
-    * glasses
-    * belts
+    * shoes
 
 * make app look like steeltoe's prototype
     * add gradated shaded background
     * remove platform
-
 
 * comment out or remove most of the console.log statements
 
