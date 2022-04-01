@@ -49,17 +49,17 @@ window.remItemByLocation = remItemByLocation;
 const configFilename = "data.json";
 const bodyCategory = "body";
 const itemCategory = "item";
-const skinCategory = "skin";
-const lowerLocation = "lower";
-const upperLocation = "upper";
-const headLocation = "head";
+// const skinCategory = "skin";
+// const lowerLocation = "lower";
+// const upperLocation = "upper";
+// const headLocation = "head";
 let selectedBodyName;
 let scene, renderer, camera;
 let clock = new THREE.Clock();
 let animationMixers = [];
 const manager = new THREE.LoadingManager();
 const gltfLoader = new GLTFLoader(manager);
-const textureLoader = new THREE.TextureLoader(manager);
+//const textureLoader = new THREE.TextureLoader(manager);
 
 manager.onStart = function (url, itemsLoaded, itemsTotal) {
     console.log(
@@ -108,7 +108,7 @@ const loadAsync = (loader, url, name, category, location, inv_data) => {
 };
 
 function getItemByName(config_data, name) {
-    let item_data = undefined;
+    let item_data;
 
     config_data.items.every(function (item) {
         if (item.name == name) {
@@ -166,7 +166,7 @@ async function loadBodyandItems(config_data, name) {
 }
 
 function addToScene(name, loaded_data) {
-    let body_data = undefined;
+    let body_data;
     loaded_data.every(function (each) {
         if (each.category == bodyCategory) {
             body_data = each;
@@ -194,7 +194,7 @@ function addToScene(name, loaded_data) {
         animation_clip = body_gltf.animations[0];
         animation_mixer.clipAction(animation_clip).play();
     } else {
-        console.error(`There is no animation present for body: ${body.name}`);
+        console.error(`There is no animation present for body: ${name}`);
         return;
     }
 
@@ -236,7 +236,7 @@ function setBodyByName(body_name) {
     let found = false;
 
     scene.traverse(function (object) {
-        if (object.userData.category == "body") {
+        if (object.userData.category == bodyCategory) {
             if (object.userData.name == body_name) {
                 object.visible = true;
                 selectedBodyName = body_name;
@@ -254,7 +254,7 @@ function setBodyByName(body_name) {
 
 function removeAllItems() {
     scene.traverse(function (object) {
-        if (object.userData.category == "item") {
+        if (object.userData.category == itemCategory) {
             object.visible = false;
         }
     });
@@ -264,7 +264,7 @@ function remItemByName(item_name) {
     let found = false;
 
     scene.traverse(function (object) {
-        if (object.userData.category == "item") {
+        if (object.userData.category == itemCategory) {
             if (object.userData.name == item_name) {
                 found = true;
                 object.visible = false;
@@ -281,7 +281,7 @@ function remItemByLocation(item_location) {
     let found = false;
 
     scene.traverse(function (object) {
-        if (object.userData.category == "item") {
+        if (object.userData.category == itemCategory) {
             if (object.userData.location == item_location) {
                 found = true;
                 object.visible = false;
@@ -299,7 +299,7 @@ function remItemByLocation(item_location) {
 function setItemByName(item_name) {
     let item_object;
     scene.traverse(function (object) {
-        if (object.userData.category == "item") {
+        if (object.userData.category == itemCategory) {
             if (object.userData.name == item_name) {
                 item_object = object;
             }
@@ -312,7 +312,7 @@ function setItemByName(item_name) {
     }
 
     scene.traverse(function (object) {
-        if (object.userData.category == "item") {
+        if (object.userData.category == itemCategory) {
             if (object.userData.location == item_object.userData.location) {
                 object.visible = false;
             }
