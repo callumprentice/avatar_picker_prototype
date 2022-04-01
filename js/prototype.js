@@ -23,13 +23,18 @@ import { OrbitControls } from "./OrbitControls.js";
 import { GLTFLoader } from "./GLTFLoader.js";
 import * as SkeletonUtils from "./SkeletonUtils.js";
 
+window.setItemByName = setItemByName;
+window.remItemByName = remItemByName;
+window.remItemByLocation = remItemByLocation;
+
 const configFilename = "data.json";
 const bodyCategory = "body";
 const itemCategory = "item";
 const skinCategory = "skin";
-const lowerLocation = "lower"
-const upperLocation = "upper"
-const headLocation = "head"
+const lowerLocation = "lower";
+const upperLocation = "upper";
+const headLocation = "head";
+let selectedBodyName;
 let scene, renderer, camera;
 let clock = new THREE.Clock();
 let animationMixers = [];
@@ -305,12 +310,9 @@ function initWebGL(loaded_data) {
         },
         false
     );
-
-    // display initial setup (things marked as preload in config data)
-    addToScene(loaded_data, true);
 }
 
-function addToScene(loaded_data, visible) {
+function addToScene2(loaded_data, visible) {
     loaded_data.forEach(function (each) {
         if (each.category == bodyCategory || each.category == itemCategory) {
             let gltf = each.payload;
@@ -335,15 +337,17 @@ function addToScene(loaded_data, visible) {
                     lower: "",
                     upper: "",
                     head: "",
-                    inv_data: each.inv_data
+                    inv_data: each.inv_data,
                 });
             }
 
             skinTextureMap.set(each.name, {
-                lower: each.location == lowerLocation ? each.payload : stm.lower,
-                upper: each.location == upperLocation ? each.payload : stm.upper,
+                lower:
+                    each.location == lowerLocation ? each.payload : stm.lower,
+                upper:
+                    each.location == upperLocation ? each.payload : stm.upper,
                 head: each.location == headLocation ? each.payload : stm.head,
-                inv_data: each.inv_data
+                inv_data: each.inv_data,
             });
         }
     });
@@ -357,4 +361,229 @@ function startApp() {
     });
 }
 
-startApp();
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
+function getItemByName(config_data, name) {
+    let item_data = undefined;
+
+    config_data.items.every(function (item) {
+        if (item.name == name) {
+            item_data = item;
+            return false;
+        }
+        return true;
+    });
+
+    return item_data;
+}
+
+async function load_body_and_dependencies(config_data, name) {
+    let loaders = [];
+
+    config_data.bodies.every(function (body) {
+        if (body.name == name) {
+            console.log(`Found match: ${name}`);
+            console.log(`Adding GLB file for the body to load list`);
+            loaders.push(
+                loadAsync(
+                    gltfLoader,
+                    body.filename,
+                    body.name,
+                    body.category,
+                    "",
+                    body.inv_data
+                )
+            );
+
+            body.items.forEach(function (item) {
+                let item_data = getItemByName(config_data, item);
+                console.log("Adding item:", item_data.name);
+                loaders.push(
+                    loadAsync(
+                        gltfLoader,
+                        item_data.filename,
+                        item_data.name,
+                        item_data.category,
+                        item_data.location,
+                        item_data.inv_data
+                    )
+                );
+            });
+
+            // now we have a list of loaders for the body and associated items
+            // TOOD: missing textures but we can add that later - ideally by specifying a list of textures to load in the body block
+
+            // Now we load the items
+
+            return false;
+        }
+
+        return true;
+    });
+
+    console.log(`There are ${loaders.length} items to load`);
+
+    return await Promise.all(loaders);
+}
+
+function nextStage() {
+    console.log("Now moving on to the next stage of the application");
+}
+
+function addToScene(name, loaded_data) {
+    let body_data = undefined;
+    loaded_data.every(function (each) {
+        if (each.category == bodyCategory) {
+            body_data = each;
+            return false;
+        }
+        return true;
+    });
+
+    if (body_data == undefined) {
+        console.error(`Unable to load body and items for ${name}`);
+        return;
+    }
+
+    let body_gltf = body_data.payload;
+    let body_model = SkeletonUtils.clone(body_gltf.scene);
+
+    let animation_object_group;
+    let animation_mixer;
+    let animation_clip;
+
+    animation_object_group = new THREE.AnimationObjectGroup(body_model);
+    animation_mixer = new THREE.AnimationMixer(animation_object_group);
+
+    if (body_gltf.animations.length > 0) {
+        animation_clip = body_gltf.animations[0];
+        animation_mixer.clipAction(animation_clip).play();
+    } else {
+        console.error(`There is no animation present for body: ${body.name}`);
+        return
+    }
+
+    body_model.visible = false;
+    body_model.userData.name = body_data.name;
+    body_model.userData.category = body_data.category;
+    body_model.userData.inv_data = body_data.inv_data;
+    scene.add(body_model);
+
+    loaded_data.forEach(function (each) {
+        if (each.category == itemCategory) {
+            let item_gltf = each.payload;
+            let item_model = SkeletonUtils.clone(item_gltf.scene);
+
+            item_model.visible = false;
+            item_model.userData.name = each.name;
+            item_model.userData.category = each.category;
+            item_model.userData.location = each.location;
+            item_model.userData.inv_data = each.inv_data;
+
+            animation_object_group.add(item_model);
+
+            scene.add(item_model);
+        }
+    });
+
+    animationMixers.push(animation_mixer);
+}
+
+
+
+function setBodyByName(body_name) {
+    removeAllItems();
+
+    scene.traverse(function (object) {
+        if (object.userData.category == 'body') {
+            if (object.userData.name == body_name) {
+                object.visible = true;
+                selectedBodyName = body_name;
+            } else {
+                object.visible = false;
+            }
+        }
+    });
+}
+
+function removeAllItems() {
+    scene.traverse(function (object) {
+        if (object.userData.category == 'item') {
+            object.visible = false;
+        }
+    });
+}
+
+function remItemByName(item_name) {
+    scene.traverse(function (object) {
+        if (object.userData.category == 'item') {
+            if (object.userData.name == item_name) {
+                object.visible = false;
+            }
+        }
+    });
+}
+
+function remItemByLocation(item_location) {
+    scene.traverse(function (object) {
+        if (object.userData.category == 'item') {
+            if (object.userData.location == item_location) {
+                object.visible = false;
+            }
+        }
+    });
+}
+
+function setItemByName(item_name) {
+    let item_object;
+    scene.traverse(function (object) {
+        if (object.userData.category == 'item') {
+            if (object.userData.name == item_name) {
+                item_object = object;
+            }
+        }
+    });
+
+    if (item_object == undefined) {
+        console.warn(`setItemByName - unable to find item ${item_name}`)
+        return
+    }
+
+    scene.traverse(function (object) {
+        if (object.userData.category == 'item') {
+            if (object.userData.location == item_object.userData.location) {
+                object.visible = false;
+            }
+
+            if (object.userData.name == item_name) {
+                object.visible = true;
+            }
+        }
+    });
+}
+
+function test_load_body_and_dependencies() {
+    loadConfig(configFilename).then((config_data) => {
+        console.warn("Loaded configuration data:", config_data);
+
+        let initial_name = "male_body_1_head_1";
+        load_body_and_dependencies(config_data, initial_name)
+            .then((loaded_data) => {
+                console.log(`Loaded all data for ${initial_name}`);
+                console.log(loaded_data);
+                initWebGL(config_data);
+                addToScene(initial_name, loaded_data, true);
+                setBodyByName('male_body_1_head_1')
+                setItemByName('male_shirt_1')
+                setItemByName('male_pants_2')
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    });
+}
+
+// startApp();
+test_load_body_and_dependencies();
