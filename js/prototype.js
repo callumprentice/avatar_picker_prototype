@@ -9,10 +9,18 @@
  */
 
 /*
- TODO:
+ ============================== TODO ==============================
 
+* Display current:
+    body name
+    shirt name
+    pants name
+    -- int HTML on top right
 
 * Once initial set is loaded and interactive, load everything else
+
+* Disable body/head changes until rest of bodies loaded
+    * Tricky because of async nature
 
 * implement skins
     * consider loading 3 skins and attaching to userData in body
@@ -20,12 +28,26 @@
 * define inital body name in JSON vs code (let initial_name = "male_body_1_head_1";)
     * also define defaultState() in JSON
 
+* add code to produce JSON blob of INV data (see original.js)
+
 * can bodies share items (shirts etc.) - if so, we should only load once
 
 * write functions to select body based on nody and head
     * Compose a name based on selection and then use setBodyByName (see original)
 
 * only enable proceed when a full "set" is selected (body, shirt, pants) - what else?
+
+* conside other items
+    * hair
+    * glasses
+    * belts
+
+* make app look like steeltoe's prototype
+    * add gradated shaded background
+    * remove platform
+
+
+* comment out or remove most of the console.log statements
 
 * backup and clean out old code/functions from this file
 
@@ -45,6 +67,8 @@ import * as SkeletonUtils from "./SkeletonUtils.js";
 window.setItemByName = setItemByName;
 window.remItemByName = remItemByName;
 window.remItemByLocation = remItemByLocation;
+window.setBodyByBodyNumber = setBodyByBodyNumber;
+window.setBodyByHeadNumber = setBodyByHeadNumber;
 
 const configFilename = "data.json";
 const bodyCategory = "body";
@@ -54,6 +78,12 @@ const itemCategory = "item";
 // const upperLocation = "upper";
 // const headLocation = "head";
 let selectedBodyName;
+
+
+let curBodyNumber = '1';    // TODO: set from JSON
+let curHeadNumber = '1';    // TODO: set from JSON
+let curSex = 'male';        // TODO: set from JSON
+
 let scene, renderer, camera;
 let clock = new THREE.Clock();
 let animationMixers = [];
@@ -160,8 +190,6 @@ async function loadBodyandItems(config_data, name) {
         return true;
     });
 
-    console.log(`There are ${loaders.length} items to load`);
-
     return await Promise.all(loaders);
 }
 
@@ -229,6 +257,22 @@ function defaultState() {
     setItemByName("male_shirt_1");
     setItemByName("male_pants_2");
 }
+
+function setBodyByNumbers() {
+    let body_name = `${curSex}_body_${curBodyNumber}_head_${curHeadNumber}`;
+    setBodyByName(body_name);
+}
+
+function setBodyByBodyNumber(body_number) {
+    curBodyNumber = body_number;
+    setBodyByNumbers();
+}
+
+function setBodyByHeadNumber(head_number) {
+    curHeadNumber = head_number;
+    setBodyByNumbers();
+}
+
 
 function setBodyByName(body_name) {
     removeAllItems();
@@ -324,7 +368,6 @@ function setItemByName(item_name) {
     });
 }
 
-
 function initWebGL(loaded_data) {
     console.log("Initializing WebGL");
 
@@ -413,14 +456,36 @@ function startApp() {
     loadConfig(configFilename).then((config_data) => {
         console.warn("Loaded configuration data:", config_data);
 
-        let initial_name = "male_body_1_head_1";
-        loadBodyandItems(config_data, initial_name)
+        let default_body_name = "male_body_1_head_1"; // todo: get from JSON
+        loadBodyandItems(config_data, default_body_name)
             .then((loaded_data) => {
-                console.log(`Loaded all data for ${initial_name}`);
+                console.log(`Loaded all data for ${default_body_name}`);
                 initWebGL(config_data);
-                addToScene(initial_name, loaded_data, true);
+                addToScene(default_body_name, loaded_data);
 
                 defaultState();
+
+                console.log("Default state set - now load rest of items");
+
+                config_data.bodies.forEach(function (body) {
+                    if (body.name != default_body_name) {
+                        console.log(
+                            "Background loading rest of bodies: ",
+                            body
+                        );
+
+                        loadBodyandItems(config_data, body.name)
+                            .then((loaded_data) => {
+                                console.log(
+                                    `Loaded all data for ${default_body_name}`
+                                );
+                                addToScene(default_body_name, loaded_data);
+                            })
+                            .catch((err) => {
+                                console.error(err);
+                            });
+                    }
+                });
             })
             .catch((err) => {
                 console.error(err);
