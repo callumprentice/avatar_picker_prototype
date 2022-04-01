@@ -248,3 +248,31 @@ a {
 .invisible {
     visibility: hidden;
 }
+
+em {
+    color: yellow;
+    font-size: 1.5em;
+}
+
+i {
+    color: orange;
+}
+
+#debug_display {
+    position: absolute;
+    font-family: monospace;
+    width: 300px;
+    height: 200px;
+    border-radius: 15px;
+    border: 1px #666 solid;
+    margin: 8px;
+    vertical-align: top;
+    padding: 16px;
+    padding-top: 12px;
+    top: 8px;
+    right: 8px;
+    text-align: left;
+    color: white;
+    background-color: rgba(50, 150, 50, 0.15);
+    font-size: 1.1em;
+}

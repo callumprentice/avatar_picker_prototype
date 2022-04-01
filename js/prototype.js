@@ -77,12 +77,11 @@ const itemCategory = "item";
 // const lowerLocation = "lower";
 // const upperLocation = "upper";
 // const headLocation = "head";
-let selectedBodyName;
+let selectedBodyName = "Waiting..";
 
-
-let curBodyNumber = '1';    // TODO: set from JSON
-let curHeadNumber = '1';    // TODO: set from JSON
-let curSex = 'male';        // TODO: set from JSON
+let curBodyNumber = "1"; // TODO: set from JSON
+let curHeadNumber = "1"; // TODO: set from JSON
+let curSex = "male"; // TODO: set from JSON
 
 let scene, renderer, camera;
 let clock = new THREE.Clock();
@@ -115,6 +114,14 @@ manager.onProgress = function (url, itemsLoaded, itemsTotal) {
 manager.onError = function (url) {
     console.error("There was an error loading " + url);
 };
+
+function updateDebugDisplay() {
+    let el = document.getElementById("debug_display");
+    let debug_str = "<em>Debug Data:</em><br>";
+    debug_str += `<i>body_name:</i> ${selectedBodyName}`;
+
+    el.innerHTML = debug_str;
+}
 
 async function loadConfig(filename) {
     let response = await fetch(filename);
@@ -256,6 +263,8 @@ function defaultState() {
     setBodyByName("male_body_1_head_1");
     setItemByName("male_shirt_1");
     setItemByName("male_pants_2");
+
+    updateDebugDisplay();
 }
 
 function setBodyByNumbers() {
@@ -272,7 +281,6 @@ function setBodyByHeadNumber(head_number) {
     curHeadNumber = head_number;
     setBodyByNumbers();
 }
-
 
 function setBodyByName(body_name) {
     removeAllItems();
@@ -294,6 +302,8 @@ function setBodyByName(body_name) {
     if (found == false) {
         console.warn(`setBodyByName - unable to find body ${body_name}`);
     }
+
+    updateDebugDisplay();
 }
 
 function removeAllItems() {
@@ -450,6 +460,8 @@ function initWebGL(loaded_data) {
         },
         false
     );
+
+    updateDebugDisplay();
 }
 
 function startApp() {
