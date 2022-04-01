@@ -11,6 +11,10 @@
 /*
  ============================== TODO ==============================
 
+* Problem - each item of clothing needs to be associated with
+  a body or else you end up with (for example) male_pants_2 present for each possible body
+  Consider combining names with selected body and item name?
+
 * Display current:
     body name
     shirt name
@@ -118,8 +122,23 @@ manager.onError = function (url) {
 function updateDebugDisplay() {
     let el = document.getElementById("debug_display");
     let debug_str = "<em>Debug Data:</em><br>";
-    debug_str += `<i>body_name:</i> ${selectedBodyName}`;
+    // debug_str += `<i>body_name:</i> ${selectedBodyName}`;
 
+    scene.traverse(function (object) {
+        // console.log(object.userData.category, "==>", object.userData.name);
+        if (object.userData.category != undefined) {
+            if (object.userData.category == bodyCategory) {
+                if (object.visible) {
+                    debug_str += `<br><i>body_name:</i> ${object.userData.name}`;
+                }
+            }
+            if (object.userData.category == itemCategory) {
+                if (object.visible) {
+                    debug_str += `<br><i>item_name:</i> ${object.userData.name}`;
+                }
+            }
+        }
+    });
     el.innerHTML = debug_str;
 }
 
@@ -246,6 +265,7 @@ function addToScene(name, loaded_data) {
 
             item_model.visible = false;
             item_model.userData.name = each.name;
+            item_model.userData.body_name = body_model.userData.name;
             item_model.userData.category = each.category;
             item_model.userData.location = each.location;
             item_model.userData.inv_data = each.inv_data;
@@ -319,7 +339,10 @@ function remItemByName(item_name) {
 
     scene.traverse(function (object) {
         if (object.userData.category == itemCategory) {
-            if (object.userData.name == item_name) {
+            if (
+                object.userData.name == item_name &&
+                object.userData.body_name == selectedBodyName
+            ) {
                 found = true;
                 object.visible = false;
             }
@@ -329,6 +352,43 @@ function remItemByName(item_name) {
     if (found == false) {
         console.warn(`remItemByName - unable to find item ${item_name}`);
     }
+}
+
+function setItemByName(item_name) {
+    let item_object;
+    scene.traverse(function (object) {
+        if (object.userData.category == itemCategory) {
+            if (
+                object.userData.name == item_name &&
+                object.userData.body_name == selectedBodyName
+            ) {
+                item_object = object;
+            }
+        }
+    });
+
+    if (item_object == undefined) {
+        console.warn(`setItemByName - unable to find item ${item_name}`);
+        return;
+    }
+
+    scene.traverse(function (object) {
+        if (object.userData.category == itemCategory) {
+            if (object.userData.location == item_object.userData.location) {
+                object.visible = false;
+            }
+
+            if (
+                object.userData.name == item_name &&
+                object.userData.body_name == selectedBodyName
+            ) {
+                object.visible = true;
+                console.warn(`setItemByName(${item_name} setting visible`);
+            }
+        }
+    });
+
+    updateDebugDisplay();
 }
 
 function remItemByLocation(item_location) {
@@ -348,34 +408,8 @@ function remItemByLocation(item_location) {
             `remItemByLocation - unable to find location ${item_location}`
         );
     }
-}
 
-function setItemByName(item_name) {
-    let item_object;
-    scene.traverse(function (object) {
-        if (object.userData.category == itemCategory) {
-            if (object.userData.name == item_name) {
-                item_object = object;
-            }
-        }
-    });
-
-    if (item_object == undefined) {
-        console.warn(`setItemByName - unable to find item ${item_name}`);
-        return;
-    }
-
-    scene.traverse(function (object) {
-        if (object.userData.category == itemCategory) {
-            if (object.userData.location == item_object.userData.location) {
-                object.visible = false;
-            }
-
-            if (object.userData.name == item_name) {
-                object.visible = true;
-            }
-        }
-    });
+    updateDebugDisplay();
 }
 
 function initWebGL(loaded_data) {
