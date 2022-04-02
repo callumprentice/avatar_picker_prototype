@@ -26,13 +26,15 @@
 
 * only enable proceed when a full "set" is selected (body, shirt, pants) - what else?
 
+* Decide what to do when bodies change - currently removes all clothes
+
 * conside other items
     * hair
     * shoes
 
 * make app look like steeltoe's prototype
-    * add gradated shaded background
-    * remove platform
+    * add graded shaded background
+    * remove platform avatar stands on
 
 * comment out or remove most of the console.log statements
 
@@ -95,7 +97,7 @@ manager.onLoad = function () {
 
 manager.onProgress = function (url, itemsLoaded, itemsTotal) {
     let percent_loaded = parseInt((itemsLoaded * 100) / itemsTotal);
-    console.log(`Percent complete: ${percent_loaded}`);
+    //console.log(`Percent complete: ${percent_loaded}`);
 };
 
 manager.onError = function (url) {
@@ -494,7 +496,14 @@ function startApp() {
 
                 defaultState();
 
-                console.log("Default state set - now load rest of items");
+                let loadMap = [];
+                config_data.bodies.forEach(function (body) {
+                    if (body.name != default_body_name) {
+                        loadMap.push(body.name)
+                    }
+                });
+
+                console.log(`Default state set - now load rest of ${loadMap.length} items`);
 
                 config_data.bodies.forEach(function (body) {
                     if (body.name != default_body_name) {
@@ -509,6 +518,12 @@ function startApp() {
                                     `Loaded all data for ${default_body_name}`
                                 );
                                 addToScene(default_body_name, loaded_data);
+
+                                // TODO: Add a comment about this and why it's not really needed
+                                loadMap = loadMap.filter(e => e !== body.name)
+                                if (loadMap.length == 0) {
+                                    console.warn("Rest of data is loaded")
+                                }
                             })
                             .catch((err) => {
                                 console.error(err);
