@@ -32,7 +32,7 @@
 
 * look for TODOs
 
-* conside other items
+* consider other items
     * hair
     * shoes
 
@@ -48,6 +48,20 @@
     * program design
     * gotchas
         * names in JSON must all be unique
+
+
+ ======================== UX/UI/PRODUCT QUESTIONS ========================
+ * How should loading work?
+   * There is a lot of data to load so need a strategy
+   * Currently loads default avatar/clothes and app becomes interactive
+   * Then loads rest in background but still need to wait for all to load
+
+ * Describe what happens when you change bodies or sexes
+    * resulting body is naked?
+    * Resulting body has default clothing
+    * Something else?
+
+
 
 
 */
