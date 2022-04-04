@@ -20,13 +20,17 @@
     * consider loading 3 skins and attaching to userData in body
 
 * define initial body name in JSON vs code (let initial_name = "male_body_1_head_1";)
-    * also define defaultState() in JSON
+    * also define defaultMaleState() and defaultFemaleState() in JSON
+
+* add shadows back in everywhere
 
 * add code to produce JSON blob of INV data (see original.js)
 
 * only enable proceed when a full "set" is selected (body, shirt, pants) - what else?
 
 * Decide what to do when bodies change - currently removes all clothes
+
+* look for TODOs
 
 * conside other items
     * hair
@@ -61,6 +65,8 @@ window.setBodyByBodyNumber = setBodyByBodyNumber;
 window.setBodyByHeadNumber = setBodyByHeadNumber;
 
 const configFilename = "data.json";
+const femaleSex = "female";
+const maleSex = "male";
 const bodyCategory = "body";
 const itemCategory = "item";
 // const skinCategory = "skin";
@@ -71,7 +77,7 @@ let selectedBodyName = "Waiting..";
 
 let curBodyNumber = "1"; // TODO: set from JSON
 let curHeadNumber = "1"; // TODO: set from JSON
-let curSex = "male"; // TODO: set from JSON
+let curSex = ""; // TODO: set from JSON
 
 let scene, renderer, camera;
 let clock = new THREE.Clock();
@@ -295,17 +301,19 @@ function setSex(sex) {
 
     curSex = sex;
 
-    if (curSex == "male") {
+    if (curSex == maleSex) {
         defaultMaleState();
-    } else {
+    } else if (curSex == femaleSex) {
         defaultFemaleState();
+    } else {
+        console.error("Incorrect gender specified");
     }
 }
 
 function defaultMaleState() {
     setBodyByName("male_body_1_head_1");
     setItemByName("male_shirt_1");
-    setItemByName("male_pants_2");
+    setItemByName("male_pants_1");
 
     updateDebugDisplay();
 }
@@ -313,7 +321,7 @@ function defaultMaleState() {
 function defaultFemaleState() {
     setBodyByName("female_body_1_head_1");
     setItemByName("female_shirt_1");
-    setItemByName("female_pants_2");
+    setItemByName("female_pants_1");
 
     updateDebugDisplay();
 }
@@ -540,7 +548,7 @@ function startApp() {
                 initWebGL(config_data);
                 addToScene(default_body_name, loaded_data);
 
-                setSex("male");
+                setSex(maleSex);
 
                 let loadMap = [];
                 config_data.bodies.forEach(function (body) {
