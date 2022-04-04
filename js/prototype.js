@@ -237,6 +237,13 @@ function addToScene(name, loaded_data) {
         return;
     }
 
+        let body_skeleton;
+        body_model.traverse(function (object) {
+            if (object.isSkinnedMesh) {
+                body_skeleton = object.skeleton;
+            }
+        });
+
     body_model.visible = false;
     body_model.userData.name = body_data.name;
     body_model.userData.category = body_data.category;
@@ -254,6 +261,25 @@ function addToScene(name, loaded_data) {
             item_model.userData.category = each.category;
             item_model.userData.location = each.location;
             item_model.userData.inv_data = each.inv_data;
+
+
+
+            item_model.traverse(function (object) {
+                if (object.isSkinnedMesh) {
+                    // Here we copy over the position, rotation & scale from
+                    // the body skeleton bones to the shirt bones. This appears
+                    // to do the right thing only when the morph bones exported
+                    // from Blender using Avatar have the correct scale value
+                    object.skeleton.bones.forEach(function (bone, index) {
+                        bone.position.copy(body_skeleton.bones[index].position);
+                        bone.scale.copy(body_skeleton.bones[index].scale);
+                        bone.rotation.copy(body_skeleton.bones[index].rotation);
+                    });
+
+                    object.skeleton.update();
+                }
+            });
+
 
             animation_object_group.add(item_model);
 

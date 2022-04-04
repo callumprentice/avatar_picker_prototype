@@ -13,7 +13,7 @@
                     "head": "/home/foo/bar/head1"
                 }
             },
-            "filename": "./test_assets/male/bodies/male_body_1_head_1.glb",
+            "filename": "./new_test_assets/male/bodies/male_body_1_head_1.glb",
             "items": [
                 "male_shirt_1",
                 "male_shirt_2",
@@ -31,7 +31,7 @@
                     "head": "/home/foo/bar/head2"
                 }
             },
-            "filename": "./test_assets/male/bodies/male_body_1_head_2.glb",
+            "filename": "./new_test_assets/male/bodies/male_body_1_head_2.glb",
             "items": [
                 "male_shirt_1",
                 "male_shirt_2",
@@ -49,7 +49,7 @@
                     "head": "/home/foo/bar/head1"
                 }
             },
-            "filename": "./test_assets/male/bodies/male_body_2_head_1.glb",
+            "filename": "./new_test_assets/male/bodies/male_body_2_head_1.glb",
             "items": [
                 "male_shirt_1",
                 "male_shirt_2",
@@ -67,7 +67,25 @@
                     "head": "/home/foo/bar/head2"
                 }
             },
-            "filename": "./test_assets/male/bodies/male_body_2_head_2.glb",
+            "filename": "./new_test_assets/male/bodies/male_body_2_head_2.glb",
+            "items": [
+                "male_shirt_1",
+                "male_shirt_2",
+                "male_pants_1",
+                "male_pants_2"
+            ]
+        },
+        {
+            "name": "male_body_3_head_1",
+            "category": "body",
+            "inv_data": {
+                "sex": "male",
+                "inv_paths": {
+                    "body": "/home/foo/bar/body2",
+                    "head": "/home/foo/bar/head2"
+                }
+            },
+            "filename": "./new_test_assets/male/bodies/male_body_3_head_1.glb",
             "items": [
                 "male_shirt_1",
                 "male_shirt_2",
@@ -85,7 +103,7 @@
                     "head": "/home/foo/bar/head1"
                 }
             },
-            "filename": "./test_assets/female/bodies/female_body_1_head_1.glb",
+            "filename": "./new_test_assets/female/bodies/female_body_1_head_1.glb",
             "items": [
                 "female_shirt_1",
                 "female_shirt_2",
@@ -103,7 +121,7 @@
                     "head": "/home/foo/bar/head2"
                 }
             },
-            "filename": "./test_assets/female/bodies/female_body_1_head_2.glb",
+            "filename": "./new_test_assets/female/bodies/female_body_1_head_2.glb",
             "items": [
                 "female_shirt_1",
                 "female_shirt_2",
@@ -121,7 +139,7 @@
                     "head": "/home/foo/bar/head1"
                 }
             },
-            "filename": "./test_assets/female/bodies/female_body_2_head_1.glb",
+            "filename": "./new_test_assets/female/bodies/female_body_2_head_1.glb",
             "items": [
                 "female_shirt_1",
                 "female_shirt_2",
@@ -139,7 +157,7 @@
                     "head": "/home/foo/bar/head2"
                 }
             },
-            "filename": "./test_assets/female/bodies/female_body_2_head_2.glb",
+            "filename": "./new_test_assets/female/bodies/female_body_2_head_2.glb",
             "items": [
                 "female_shirt_1",
                 "female_shirt_2",
@@ -151,7 +169,7 @@
     "items": [
         {
             "name": "male_shirt_1",
-            "filename": "./test_assets/male/items/shirts/male_shirt_1.glb",
+            "filename": "./new_test_assets/male/items/shirts/male_shirt_1.glb",
             "location": "upper",
             "category": "item",
             "inv_data": {
@@ -163,7 +181,7 @@
         },
         {
             "name": "male_shirt_2",
-            "filename": "./test_assets/male/items/shirts/male_shirt_2.glb",
+            "filename": "./new_test_assets/male/items/shirts/male_shirt_2.glb",
             "location": "upper",
             "category": "item",
             "inv_data": {
@@ -175,7 +193,7 @@
         },
         {
             "name": "male_pants_1",
-            "filename": "./test_assets/male/items/pants/male_pants_1.glb",
+            "filename": "./new_test_assets/male/items/pants/male_pants_1.glb",
             "location": "lower",
             "category": "item",
             "inv_data": {
@@ -187,7 +205,7 @@
         },
         {
             "name": "male_pants_2",
-            "filename": "./test_assets/male/items/pants/male_pants_2.glb",
+            "filename": "./new_test_assets/male/items/pants/male_pants_2.glb",
             "location": "lower",
             "category": "item",
             "inv_data": {
@@ -199,7 +217,7 @@
         },
         {
             "name": "female_shirt_1",
-            "filename": "./test_assets/female/items/shirts/female_shirt_1.glb",
+            "filename": "./new_test_assets/female/items/shirts/female_shirt_1.glb",
             "location": "upper",
             "category": "item",
             "inv_data": {
@@ -211,7 +229,7 @@
         },
         {
             "name": "female_shirt_2",
-            "filename": "./test_assets/female/items/shirts/female_shirt_2.glb",
+            "filename": "./new_test_assets/female/items/shirts/female_shirt_2.glb",
             "location": "upper",
             "category": "item",
             "inv_data": {
@@ -223,7 +241,7 @@
         },
         {
             "name": "female_pants_1",
-            "filename": "./test_assets/female/items/pants/female_pants_1.glb",
+            "filename": "./new_test_assets/female/items/pants/female_pants_1.glb",
             "location": "lower",
             "category": "item",
             "inv_data": {
@@ -235,7 +253,7 @@
         },
         {
             "name": "female_pants_2",
-            "filename": "./test_assets/female/items/pants/female_pants_2.glb",
+            "filename": "./new_test_assets/female/items/pants/female_pants_2.glb",
             "location": "lower",
             "category": "item",
             "inv_data": {
@@ -249,9 +267,9 @@
     "skins": [
         {
             "name": "male_skin_1",
-            "lower": "./test_assets/male/skintones/light/lower.jpg",
-            "upper": "./test_assets/male/skintones/light/upper.jpg",
-            "head": "./test_assets/male/skintones/light/head.jpg",
+            "lower": "./new_test_assets/male/skintones/light/lower.jpg",
+            "upper": "./new_test_assets/male/skintones/light/upper.jpg",
+            "head": "./new_test_assets/male/skintones/light/head.jpg",
             "category": "skin",
             "inv_data": {
                 "sex": "male",
@@ -262,9 +280,9 @@
         },
         {
             "name": "male_skin_2",
-            "lower": "./test_assets/male/skintones/dark/lower.jpg",
-            "upper": "./test_assets/male/skintones/dark/upper.jpg",
-            "head": "./test_assets/male/skintones/dark/head.jpg",
+            "lower": "./new_test_assets/male/skintones/dark/lower.jpg",
+            "upper": "./new_test_assets/male/skintones/dark/upper.jpg",
+            "head": "./new_test_assets/male/skintones/dark/head.jpg",
             "category": "skin",
             "inv_data": {
                 "sex": "male",
@@ -275,9 +293,9 @@
         },
         {
             "name": "female_skin_1",
-            "lower": "./test_assets/female/skintones/light/lower.jpg",
-            "upper": "./test_assets/female/skintones/light/upper.jpg",
-            "head": "./test_assets/female/skintones/light/head.jpg",
+            "lower": "./new_test_assets/female/skintones/light/lower.jpg",
+            "upper": "./new_test_assets/female/skintones/light/upper.jpg",
+            "head": "./new_test_assets/female/skintones/light/head.jpg",
             "category": "skin",
             "inv_data": {
                 "sex": "female",
@@ -288,9 +306,9 @@
         },
         {
             "name": "female_skin_2",
-            "lower": "./test_assets/female/skintones/dark/lower.jpg",
-            "upper": "./test_assets/female/skintones/dark/upper.jpg",
-            "head": "./test_assets/female/skintones/dark/head.jpg",
+            "lower": "./new_test_assets/female/skintones/dark/lower.jpg",
+            "upper": "./new_test_assets/female/skintones/dark/upper.jpg",
+            "head": "./new_test_assets/female/skintones/dark/head.jpg",
             "category": "skin",
             "inv_data": {
                 "sex": "female",

@@ -44,6 +44,7 @@ a {
 #malehead2,
 #malebody1,
 #malebody2,
+#malebody3,
 #maleskin1,
 #maleskin2,
 #maleshirt1,
@@ -92,6 +93,7 @@ a {
 #malehead2,
 #malebody1,
 #malebody2,
+#malebody3,
 #maleskin1,
 #maleskin2,
 #maleshirt1,
@@ -106,6 +108,7 @@ a {
 #malehead2:hover,
 #malebody1:hover,
 #malebody2:hover,
+#malebody3:hover,
 #maleskin1:hover,
 #maleskin2:hover,
 #maleshirt1:hover,
@@ -131,14 +134,21 @@ a {
 }
 #malehead2,
 #malebody2,
+#malebody3,
 #maleskin2,
 #maleshirt2,
 #malepants2 {
     left: 110px;
 }
 
+#malebody3 {
+    left: 212px;
+}
+
+
 #malebody1,
 #malebody2,
+#malebody3,
 #femalebody1,
 #femalebody2 {
     top: 80px;
