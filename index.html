@@ -9,6 +9,32 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
         <script type="module" src="js/prototype.js"></script>
+        <script>
+        function uiSelectSex(sex) {
+            let male_state = 'visible'
+            let female_state = 'hidden'
+            if (sex == 'female') {
+                male_state = 'hidden'
+                female_state = 'visible'
+            }
+
+            var elements = document.getElementsByClassName('male');
+            for (let i in elements) {
+                if (elements.hasOwnProperty(i)) {
+                    elements[i].style.visibility = male_state;
+                }
+            }
+            var elements = document.getElementsByClassName('female');
+            for (let i in elements) {
+                if (elements.hasOwnProperty(i)) {
+                    elements[i].style.visibility = female_state;
+                }
+            }
+
+            // call this from your UI male/female selector
+            setSex(sex)
+        }
+        </script>
     </head>
     <body>
         <div id="container"></div>
@@ -32,10 +58,11 @@
 
         <a href="#" onclick="setBodyByBodyNumber('1')"><div class="female invisible" id="femalebody1">BODY&nbsp;1</div></a>
         <a href="#" onclick="setBodyByBodyNumber('2')"><div class="female invisible" id="femalebody2">BODY&nbsp;2</div></a>
-        <a href="#" onclick="setBodyByHeadNumber('1')"><div class="female invisible" id="femalehead1">HEAD&nbsp;1</div></a>
-        <a href="#" onclick="setBodyByHeadNumber('2')"><div class="female invisible" id="femalehead2">HEAD&nbsp;2</div></a>
-        <a href="#" onclick="setSkinByName('female_skin_1')"><div class="female invisible" id="femaleskin1">SKIN&nbsp;1</div></a>
-        <a href="#" onclick="setSkinByName('female_skin_2')"><div class="female invisible" id="femaleskin2">SKIN&nbsp;2</div></a>
+        <a href="#" onclick="setBodyByBodyNumber('3')"><div class="female invisible" id="femalebody3">BODY&nbsp;3</div></a>
+        <a href="#" onclick="/*setBodyByHeadNumber('1')*/"><div class="female invisible" id="femalehead1"><strike>HEAD&nbsp;1</strike></div></a>
+        <a href="#" onclick="/*setBodyByHeadNumber('2')*/"><div class="female invisible" id="femalehead2"><strike>HEAD&nbsp;2</strike></div></a>
+        <a href="#" onclick="/*setSkinByName('female_skin_1')*/"><div class="female invisible" id="femaleskin1"><strike>SKIN&nbsp;1</strike></div></a>
+        <a href="#" onclick="/*setSkinByName('female_skin_2')*/"><div class="female invisible" id="femaleskin2"><strike>SKIN&nbsp;2</strike></div></a>
         <a href="#" onclick="setItemByName('female_shirt_1')"><div class="female invisible" id="femaleshirt1">SHIRT&nbsp;1</div></a>
         <a href="#" onclick="setItemByName('female_shirt_2')"><div class="female invisible" id="femaleshirt2">SHIRT&nbsp;2</div></a>
         <a href="#" onclick="setItemByName('female_pants_1')"><div class="female invisible" id="femalepants1">PANTS&nbsp;1</div></a>

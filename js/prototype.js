@@ -53,6 +53,7 @@ import { OrbitControls } from "./OrbitControls.js";
 import { GLTFLoader } from "./GLTFLoader.js";
 import * as SkeletonUtils from "./SkeletonUtils.js";
 
+window.setSex = setSex;
 window.setItemByName = setItemByName;
 window.remItemByName = remItemByName;
 window.remItemByLocation = remItemByLocation;
@@ -237,12 +238,12 @@ function addToScene(name, loaded_data) {
         return;
     }
 
-        let body_skeleton;
-        body_model.traverse(function (object) {
-            if (object.isSkinnedMesh) {
-                body_skeleton = object.skeleton;
-            }
-        });
+    let body_skeleton;
+    body_model.traverse(function (object) {
+        if (object.isSkinnedMesh) {
+            body_skeleton = object.skeleton;
+        }
+    });
 
     body_model.visible = false;
     body_model.userData.name = body_data.name;
@@ -262,8 +263,6 @@ function addToScene(name, loaded_data) {
             item_model.userData.location = each.location;
             item_model.userData.inv_data = each.inv_data;
 
-
-
             item_model.traverse(function (object) {
                 if (object.isSkinnedMesh) {
                     // Here we copy over the position, rotation & scale from
@@ -280,7 +279,6 @@ function addToScene(name, loaded_data) {
                 }
             });
 
-
             animation_object_group.add(item_model);
 
             scene.add(item_model);
@@ -290,10 +288,32 @@ function addToScene(name, loaded_data) {
     animationMixers.push(animation_mixer);
 }
 
-function defaultState() {
+function setSex(sex) {
+    if (sex == curSex) {
+        return;
+    }
+
+    curSex = sex;
+
+    if (curSex == "male") {
+        defaultMaleState();
+    } else {
+        defaultFemaleState();
+    }
+}
+
+function defaultMaleState() {
     setBodyByName("male_body_1_head_1");
     setItemByName("male_shirt_1");
     setItemByName("male_pants_2");
+
+    updateDebugDisplay();
+}
+
+function defaultFemaleState() {
+    setBodyByName("female_body_1_head_1");
+    setItemByName("female_shirt_1");
+    setItemByName("female_pants_2");
 
     updateDebugDisplay();
 }
@@ -520,16 +540,18 @@ function startApp() {
                 initWebGL(config_data);
                 addToScene(default_body_name, loaded_data);
 
-                defaultState();
+                setSex("male");
 
                 let loadMap = [];
                 config_data.bodies.forEach(function (body) {
                     if (body.name != default_body_name) {
-                        loadMap.push(body.name)
+                        loadMap.push(body.name);
                     }
                 });
 
-                console.log(`Default state set - now load rest of ${loadMap.length} items`);
+                console.log(
+                    `Default state set - now load rest of ${loadMap.length} items`
+                );
 
                 config_data.bodies.forEach(function (body) {
                     if (body.name != default_body_name) {
@@ -546,9 +568,11 @@ function startApp() {
                                 addToScene(default_body_name, loaded_data);
 
                                 // TODO: Add a comment about this and why it's not really needed
-                                loadMap = loadMap.filter(e => e !== body.name)
+                                loadMap = loadMap.filter(
+                                    (e) => e !== body.name
+                                );
                                 if (loadMap.length == 0) {
-                                    console.warn("Rest of data is loaded")
+                                    console.warn("Rest of data is loaded");
                                 }
                             })
                             .catch((err) => {
