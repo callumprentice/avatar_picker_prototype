@@ -1,76 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Avatar Picker: Standalone Prototype</title>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-        <link type="text/css" rel="stylesheet" href="css/style.css" />
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
-        <script type="module" src="js/prototype.js"></script>
-        <script>
-        function uiSelectSex(sex) {
-            let male_state = 'visible'
-            let female_state = 'hidden'
-            if (sex == 'female') {
-                male_state = 'hidden'
-                female_state = 'visible'
-            }
+  <head>
+    <title>Avatar Picker: Standalone Prototype</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" rel="stylesheet" href="css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+    <script type="module" src="js/prototype.js"></script>
+    <script>
+      function uiSelectSex(sex) {
+          let male_state = 'visible'
+          let female_state = 'hidden'
+          if (sex == 'female') {
+              male_state = 'hidden'
+              female_state = 'visible'
+          }
 
-            var elements = document.getElementsByClassName('male');
-            for (let i in elements) {
-                if (elements.hasOwnProperty(i)) {
-                    elements[i].style.visibility = male_state;
-                }
-            }
-            var elements = document.getElementsByClassName('female');
-            for (let i in elements) {
-                if (elements.hasOwnProperty(i)) {
-                    elements[i].style.visibility = female_state;
-                }
-            }
+          var elements = document.getElementsByClassName('male');
+          for (let i in elements) {
+              if (elements.hasOwnProperty(i)) {
+                  elements[i].style.visibility = male_state;
+              }
+          }
+          var elements = document.getElementsByClassName('female');
+          for (let i in elements) {
+              if (elements.hasOwnProperty(i)) {
+                  elements[i].style.visibility = female_state;
+              }
+          }
 
-            // call this from your UI male/female selector
-            setSex(sex)
-        }
-        </script>
-    </head>
-    <body>
-        <div id="container"></div>
-        <div id="debug_display"></div>
-        <a href="#" onclick="uiSelectSex('male')"><div id="male">MALE</div></a>
-        <a href="#" onclick="uiSelectSex('female')"><div id="female">FEMALE</div></a>
-
-        <a href="#" onclick="setBodyByBodyNumber('1')"><div class="male" id="malebody1">BODY&nbsp;1</div></a>
-        <a href="#" onclick="setBodyByBodyNumber('2')"><div class="male" id="malebody2">BODY&nbsp;2</div></a>
-        <a href="#" onclick="setBodyByBodyNumber('3')"><div class="male" id="malebody3">BODY&nbsp;3</div></a>
-        <a href="#" onclick="/*setBodyByHeadNumber('1')*/"><div class="male" id="malehead1"><strike>HEAD&nbsp;1</strike></div></a>
-        <a href="#" onclick="/*setBodyByHeadNumber('2')*/"><div class="male" id="malehead2"><strike>HEAD&nbsp;2</strike></div></a>
-        <a href="#" onclick="/*setSkinByName('male_skin_1')*/"><div class="male" id="maleskin1"><strike>SKIN&nbsp;1</strike></div></a>
-        <a href="#" onclick="/*setSkinByName('male_skin_2')*/"><div class="male" id="maleskin2"><strike>SKIN&nbsp;2</strike></div></a>
-        <a href="#" onclick="setItemByName('male_shirt_1')"><div class="male" id="maleshirt1">SHIRT&nbsp;1</div></a>
-        <a href="#" onclick="setItemByName('male_shirt_2')"><div class="male" id="maleshirt2">SHIRT&nbsp;2</div></a>
-        <a href="#" onclick="setItemByName('male_pants_1')"><div class="male" id="malepants1">PANTS&nbsp;1</div></a>
-        <a href="#" onclick="setItemByName('male_pants_2')"><div class="male" id="malepants2">PANTS&nbsp;2</div></a>
-        <a href="#" onclick="remItemByLocation('upper')"><div class="male" id="maleshirtrem"> X</div></a>
-        <a href="#" onclick="remItemByLocation('lower')"><div class="male" id="malepantsrem"> X</div></a>
-
-        <a href="#" onclick="setBodyByBodyNumber('1')"><div class="female invisible" id="femalebody1">BODY&nbsp;1</div></a>
-        <a href="#" onclick="setBodyByBodyNumber('2')"><div class="female invisible" id="femalebody2">BODY&nbsp;2</div></a>
-        <a href="#" onclick="setBodyByBodyNumber('3')"><div class="female invisible" id="femalebody3">BODY&nbsp;3</div></a>
-        <a href="#" onclick="/*setBodyByHeadNumber('1')*/"><div class="female invisible" id="femalehead1"><strike>HEAD&nbsp;1</strike></div></a>
-        <a href="#" onclick="/*setBodyByHeadNumber('2')*/"><div class="female invisible" id="femalehead2"><strike>HEAD&nbsp;2</strike></div></a>
-        <a href="#" onclick="/*setSkinByName('female_skin_1')*/"><div class="female invisible" id="femaleskin1"><strike>SKIN&nbsp;1</strike></div></a>
-        <a href="#" onclick="/*setSkinByName('female_skin_2')*/"><div class="female invisible" id="femaleskin2"><strike>SKIN&nbsp;2</strike></div></a>
-        <a href="#" onclick="setItemByName('female_shirt_1')"><div class="female invisible" id="femaleshirt1">SHIRT&nbsp;1</div></a>
-        <a href="#" onclick="setItemByName('female_shirt_2')"><div class="female invisible" id="femaleshirt2">SHIRT&nbsp;2</div></a>
-        <a href="#" onclick="setItemByName('female_pants_1')"><div class="female invisible" id="femalepants1">PANTS&nbsp;1</div></a>
-        <a href="#" onclick="setItemByName('female_pants_2')"><div class="female invisible" id="femalepants2">PANTS&nbsp;2</div></a>
-        <a href="#" onclick="remItemByLocation('upper')"><div class="female invisible" id="femaleshirtrem"> X</div></a>
-        <a href="#" onclick="remItemByLocation('lower')"><div class="female invisible" id="femalepantsrem"> X</div></a>
-
-        <a href="#" onclick="publishInvData()"><div id="continue">CONTINUE</div></a>
-    </body>
-</script>
+          // call this from your UI male/female selector
+          setSex(sex)
+      }
+    </script>
+  </head>
+  <body>
+    <div id="container"></div>
+    <div id="debug_display"></div>
+    <div id="loading">
+      <svg version="1.1" id="L4" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+        viewBox="0 0 100 40" enable-background="new 0 0 0 0" xml:space="preserve">
+        <circle fill="#fff" stroke="none" cx="6" cy="20" r="6">
+          <animate
+            attributeName="opacity"
+            dur="1s"
+            values="0;1;0"
+            repeatCount="indefinite"
+            begin="0.1"/>
+        </circle>
+        <circle fill="#fff" stroke="none" cx="26" cy="20" r="6">
+          <animate
+            attributeName="opacity"
+            dur="1s"
+            values="0;1;0"
+            repeatCount="indefinite"
+            begin="0.2"/>
+        </circle>
+        <circle fill="#fff" stroke="none" cx="46" cy="20" r="6">
+          <animate
+            attributeName="opacity"
+            dur="1s"
+            values="0;1;0"
+            repeatCount="indefinite"
+            begin="0.3"/>
+        </circle>
+      </svg>
+    </div>
+    <div id="controls">
+      <a href="#" onclick="uiSelectSex('male')">
+        <div id="male">MALE</div>
+      </a>
+      <a href="#" onclick="uiSelectSex('female')">
+        <div id="female">FEMALE</div>
+      </a>
+      <a href="#" onclick="setBodyByBodyNumber('1')">
+        <div class="male" id="malebody1">BODY&nbsp;1</div>
+      </a>
+      <a href="#" onclick="setBodyByBodyNumber('2')">
+        <div class="male" id="malebody2">BODY&nbsp;2</div>
+      </a>
+      <a href="#" onclick="setBodyByBodyNumber('3')">
+        <div class="male" id="malebody3">BODY&nbsp;3</div>
+      </a>
+      <a href="#" onclick="/*setBodyByHeadNumber('1')*/">
+        <div class="male" id="malehead1"><strike>HEAD&nbsp;1</strike></div>
+      </a>
+      <a href="#" onclick="/*setBodyByHeadNumber('2')*/">
+        <div class="male" id="malehead2"><strike>HEAD&nbsp;2</strike></div>
+      </a>
+      <a href="#" onclick="/*setSkinByName('male_skin_1')*/">
+        <div class="male" id="maleskin1"><strike>SKIN&nbsp;1</strike></div>
+      </a>
+      <a href="#" onclick="/*setSkinByName('male_skin_2')*/">
+        <div class="male" id="maleskin2"><strike>SKIN&nbsp;2</strike></div>
+      </a>
+      <a href="#" onclick="setItemByName('male_shirt_1')">
+        <div class="male" id="maleshirt1">SHIRT&nbsp;1</div>
+      </a>
+      <a href="#" onclick="setItemByName('male_shirt_2')">
+        <div class="male" id="maleshirt2">SHIRT&nbsp;2</div>
+      </a>
+      <a href="#" onclick="setItemByName('male_pants_1')">
+        <div class="male" id="malepants1">PANTS&nbsp;1</div>
+      </a>
+      <a href="#" onclick="setItemByName('male_pants_2')">
+        <div class="male" id="malepants2">PANTS&nbsp;2</div>
+      </a>
+      <a href="#" onclick="remItemByLocation('upper')">
+        <div class="male" id="maleshirtrem"> X</div>
+      </a>
+      <a href="#" onclick="remItemByLocation('lower')">
+        <div class="male" id="malepantsrem"> X</div>
+      </a>
+      <a href="#" onclick="setBodyByBodyNumber('1')">
+        <div class="female invisible" id="femalebody1">BODY&nbsp;1</div>
+      </a>
+      <a href="#" onclick="setBodyByBodyNumber('2')">
+        <div class="female invisible" id="femalebody2">BODY&nbsp;2</div>
+      </a>
+      <a href="#" onclick="setBodyByBodyNumber('3')">
+        <div class="female invisible" id="femalebody3">BODY&nbsp;3</div>
+      </a>
+      <a href="#" onclick="/*setBodyByHeadNumber('1')*/">
+        <div class="female invisible" id="femalehead1"><strike>HEAD&nbsp;1</strike></div>
+      </a>
+      <a href="#" onclick="/*setBodyByHeadNumber('2')*/">
+        <div class="female invisible" id="femalehead2"><strike>HEAD&nbsp;2</strike></div>
+      </a>
+      <a href="#" onclick="/*setSkinByName('female_skin_1')*/">
+        <div class="female invisible" id="femaleskin1"><strike>SKIN&nbsp;1</strike></div>
+      </a>
+      <a href="#" onclick="/*setSkinByName('female_skin_2')*/">
+        <div class="female invisible" id="femaleskin2"><strike>SKIN&nbsp;2</strike></div>
+      </a>
+      <a href="#" onclick="setItemByName('female_shirt_1')">
+        <div class="female invisible" id="femaleshirt1">SHIRT&nbsp;1</div>
+      </a>
+      <a href="#" onclick="setItemByName('female_shirt_2')">
+        <div class="female invisible" id="femaleshirt2">SHIRT&nbsp;2</div>
+      </a>
+      <a href="#" onclick="setItemByName('female_pants_1')">
+        <div class="female invisible" id="femalepants1">PANTS&nbsp;1</div>
+      </a>
+      <a href="#" onclick="setItemByName('female_pants_2')">
+        <div class="female invisible" id="femalepants2">PANTS&nbsp;2</div>
+      </a>
+      <a href="#" onclick="remItemByLocation('upper')">
+        <div class="female invisible" id="femaleshirtrem"> X</div>
+      </a>
+      <a href="#" onclick="remItemByLocation('lower')">
+        <div class="female invisible" id="femalepantsrem"> X</div>
+      </a>
+      <a href="#" onclick="publishInvData()">
+        <div id="continue">CONTINUE</div>
+      </a>
+    </div>
+  </body>
+  </script>
 </html>

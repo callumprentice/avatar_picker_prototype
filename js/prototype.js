@@ -77,6 +77,7 @@ window.remItemByName = remItemByName;
 window.remItemByLocation = remItemByLocation;
 window.setBodyByBodyNumber = setBodyByBodyNumber;
 window.setBodyByHeadNumber = setBodyByHeadNumber;
+window.publishInvData = publishInvData;
 
 const configFilename = "data.json";
 const femaleSex = "female";
@@ -84,8 +85,8 @@ const maleSex = "male";
 const bodyCategory = "body";
 const itemCategory = "item";
 // const skinCategory = "skin";
-// const lowerLocation = "lower";
-// const upperLocation = "upper";
+const lowerLocation = "lower";
+const upperLocation = "upper";
 // const headLocation = "head";
 let selectedBodyName = "Waiting..";
 
@@ -415,6 +416,9 @@ function remItemByName(item_name) {
     if (found == false) {
         console.warn(`remItemByName - unable to find item ${item_name}`);
     }
+
+    checkCompleteness()
+
 }
 
 function setItemByName(item_name) {
@@ -451,6 +455,8 @@ function setItemByName(item_name) {
         }
     });
 
+    checkCompleteness()
+
     updateDebugDisplay();
 }
 
@@ -472,7 +478,70 @@ function remItemByLocation(item_location) {
         );
     }
 
+    checkCompleteness()
+
     updateDebugDisplay();
+}
+
+
+function checkCompleteness() {
+    let body_selected = false;
+    let item_lower_selected = false;
+    let item_upper_selected = false;
+
+    scene.traverse(function (object) {
+        if (object.userData.category != undefined) {
+            if (object.userData.category == bodyCategory) {
+                if (object.visible) {
+                    body_selected = true;
+                }
+            }
+            if (object.userData.category == itemCategory) {
+                if (object.visible) {
+
+                    if (object.userData.location == lowerLocation) {
+                        item_lower_selected = true;
+                    }
+                    if (object.userData.location == upperLocation) {
+                        item_upper_selected = true;
+                    }
+                }
+            }
+        }
+    });
+
+    if (body_selected && item_lower_selected && item_upper_selected) {
+document.getElementById("continue").style.visibility = "visible";
+    } else {
+document.getElementById("continue").style.visibility = "hidden";
+    }
+}
+
+function publishInvData() {
+        let inv_paths = [];
+
+    scene.traverse(function (object) {
+        if (object.userData.category != undefined) {
+            if (object.userData.category == bodyCategory) {
+                if (object.visible) {
+
+            inv_paths.push(object.userData.inv_data);
+
+
+                }
+            }
+            if (object.userData.category == itemCategory) {
+                if (object.visible) {
+                    inv_paths.push(object.userData.inv_data);
+                }
+            }
+        }
+    });
+
+    let json_data = JSON.stringify(inv_paths);
+
+    console.log('JSON data representing the selected items:', json_data);
+
 }
 
 function initWebGL(loaded_data) {
@@ -585,6 +654,8 @@ function startApp() {
                     `Default state set - now load rest of ${loadMap.length} items`
                 );
 
+                document.getElementById("loading").style.visibility = "visible";
+
                 config_data.bodies.forEach(function (body) {
                     if (body.name != default_body_name) {
                         console.log(
@@ -606,6 +677,12 @@ function startApp() {
                                 );
                                 if (loadMap.length == 0) {
                                     console.warn("Rest of data is loaded");
+                                    document.getElementById(
+                                        "loading"
+                                    ).style.visibility = "hidden";
+                                    document.getElementById(
+                                        "controls"
+                                    ).style.visibility = "visible";
                                 }
                             })
                             .catch((err) => {

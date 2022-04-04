@@ -10,6 +10,22 @@ a {
     text-decoration: none;
 }
 
+#controls {
+    position: absolute;
+    left: 0;
+    top: 0;
+    visibility: hidden;
+}
+
+#loading {
+    position: absolute;
+    left: 32px;
+    top: 0px;
+    height: 128px;
+    width: 128px;
+    visibility: hidden;
+}
+
 #male,
 #female {
     position: absolute;
@@ -253,6 +269,7 @@ a {
     text-align: center;
     background-color: rgba(50, 150, 50, 0.65);
     font-size: 1.5em;
+    visibility: hidden;
 }
 #continue:hover {
     background-color: rgba(50, 150, 50, 0.8);
