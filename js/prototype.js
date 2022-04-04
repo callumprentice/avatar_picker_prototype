@@ -306,24 +306,32 @@ function setSex(sex) {
     } else if (curSex == femaleSex) {
         defaultFemaleState();
     } else {
-        console.error("Incorrect gender specified");
+        console.error("Incorrect gender specified for setSex");
     }
 }
 
 function defaultMaleState() {
     setBodyByName("male_body_1_head_1");
-    setItemByName("male_shirt_1");
-    setItemByName("male_pants_1");
 
     updateDebugDisplay();
 }
 
 function defaultFemaleState() {
     setBodyByName("female_body_1_head_1");
-    setItemByName("female_shirt_1");
-    setItemByName("female_pants_1");
 
     updateDebugDisplay();
+}
+
+function defaultItems() {
+    if (curSex == maleSex) {
+        setItemByName("male_shirt_1");
+        setItemByName("male_pants_1");
+    } else if (curSex == femaleSex) {
+        setItemByName("female_shirt_1");
+        setItemByName("female_pants_1");
+    } else {
+        console.error("Incorrect gender specified for defaultState");
+    }
 }
 
 function setBodyByNumbers() {
@@ -361,6 +369,8 @@ function setBodyByName(body_name) {
     if (found == false) {
         console.warn(`setBodyByName - unable to find body ${body_name}`);
     }
+
+    defaultItems();
 
     updateDebugDisplay();
 }
@@ -576,6 +586,7 @@ function startApp() {
                                 addToScene(default_body_name, loaded_data);
 
                                 // TODO: Add a comment about this and why it's not really needed
+                                // it filters out loaded item from list so we can test when 0 entries
                                 loadMap = loadMap.filter(
                                     (e) => e !== body.name
                                 );
