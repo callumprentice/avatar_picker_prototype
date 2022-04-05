@@ -13,9 +13,6 @@
 
 
 
-* implement skins
-    * consider loading 3 skins and attaching to userData in body
-
 * define initial body name in JSON vs code (let initial_name = "male_body_1_head_1";)
     * also define defaultMaleState() and defaultFemaleState() in JSON
 
