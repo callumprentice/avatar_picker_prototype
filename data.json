@@ -1,5 +1,9 @@
 {
-    "settings": {},
+    "settings": {
+        "defaultSex": "male",
+        "defaultBodyNumber": "1",
+        "defaultHeadNumber": "1"
+    },
     "bodies": [
         {
             "name": "male_body_1_head_1",

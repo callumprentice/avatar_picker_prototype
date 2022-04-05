@@ -9,49 +9,14 @@
  */
 
 /*
- ============================== TODO ==============================
-
-
-
-* define initial body name in JSON vs code (let initial_name = "male_body_1_head_1";)
-    * also define defaultMaleState() and defaultFemaleState() in JSON
-
-* Ask lowerLocationos to replace Legs.001/Torso.001 and Top/Bottom with upper/lower
+ ============================== THING REMAINING ==============================
+* Hide continue until the controls are visible
 
 * look for TODOs
 
-* consider other items
-    * hair
-    * shoes
+* only let avatar rotate around Y axis
 
-* implement DEBUG mode and remove crud when not in this mode
-    * comment out or remove most of the console.log statements
-
-* backup and clean out old code/functions from this file
-
-* convert all " chars to ' ones
-
-* write README with
-    * program design
-    * gotchas
-        * names in JSON must all be unique
-
-
- ======================== UX/UI/PRODUCT QUESTIONS ========================
- * How should loading work?
-   * There is a lot of data to load so need a strategy
-   * Currently loads default avatar/clothes and app becomes interactive
-   * Then loads rest in background but still need to wait for all to load
-
- * Describe what happens when you change bodies or sexes
-    * resulting body is naked?
-    * Resulting body has default clothing
-    * Something else?
-
- * Should avatar float in space or have a platform like my prototype
-    * if just floating then i will remove shadows
-
-
+* backup and clean out old code/functions in files (original.js etc.)
 */
 
 import * as THREE from "./three.module.js";
@@ -59,6 +24,7 @@ import { OrbitControls } from "./OrbitControls.js";
 import { GLTFLoader } from "./GLTFLoader.js";
 import * as SkeletonUtils from "./SkeletonUtils.js";
 
+// expose functions here to the HTML file
 window.setSex = setSex;
 window.setItemByName = setItemByName;
 window.remItemByName = remItemByName;
@@ -77,11 +43,10 @@ const itemCategory = "item";
 const lowerLocation = "lower";
 const upperLocation = "upper";
 const headLocation = "head";
-let selectedBodyName = "Waiting..";
-
-let curBodyNumber = "1"; // TODO: set from JSON
-let curHeadNumber = "1"; // TODO: set from JSON
-let curSex = ""; // TODO: set from JSON
+let selectedBodyName;
+let curSex;
+let curBodyNumber;
+let curHeadNumber;
 
 let scene, renderer, camera;
 let clock = new THREE.Clock();
@@ -92,20 +57,28 @@ const textureLoader = new THREE.TextureLoader(manager);
 let skinTextureMap = new Map();
 
 manager.onStart = function (url, itemsLoaded, itemsTotal) {
-    console.log(`Started loading data`);
+    if (devMode) {
+        console.log(`Started loading data`);
+    }
 };
 
 manager.onLoad = function () {
-    console.log(`Loading complete`);
+    if (devMode) {
+        console.log(`Loading complete`);
+    }
 };
 
 manager.onProgress = function (url, itemsLoaded, itemsTotal) {
-    //let percent_loaded = parseInt((itemsLoaded * 100) / itemsTotal);
-    //console.log(`Percent complete: ${percent_loaded}`);
+    if (devMode) {
+        let percent_loaded = parseInt((itemsLoaded * 100) / itemsTotal);
+        console.log(`Percent complete: ${percent_loaded}`);
+    }
 };
 
 manager.onError = function (url) {
-    console.error("There was an error loading " + url);
+    if (devMode) {
+        console.error("There was an error loading " + url);
+    }
 };
 
 function updateDebugDisplay() {
@@ -113,7 +86,7 @@ function updateDebugDisplay() {
         return;
     }
 
-    showDiv('debug_display', true);
+    showDiv("debug_display", true);
 
     let el = document.getElementById("debug_display");
     let debug_str = `<em>Debug Data:</em><br>`;
@@ -197,12 +170,10 @@ async function loadBodyandItems(config_data, name) {
 
     config_data.bodies.every(function (body) {
         if (body.name == name) {
-            //console.log(`Adding GLB file for the body to load list`);
             loaders.push(loadAsync(gltfLoader, body.filename, body.name, body.category, "", body.inv_data));
 
             body.items.forEach(function (item) {
                 let item_data = getItemByName(config_data, item);
-                //console.log("Adding item:", item_data.name);
                 loaders.push(
                     loadAsync(
                         gltfLoader,
@@ -217,7 +188,6 @@ async function loadBodyandItems(config_data, name) {
 
             body.skins.forEach(function (skin) {
                 let skin_data = getSkinByName(config_data, skin);
-                //console.log("Adding skin:", skin_data);
 
                 if (skinTextureMap.has(skin_data.name) == false) {
                     let lower_texture = textureLoader.load(skin_data.lower);
@@ -337,27 +307,7 @@ function setSex(sex) {
 
     curSex = sex;
 
-    if (curSex == maleSex) {
-        defaultMaleState();
-    } else if (curSex == femaleSex) {
-        defaultFemaleState();
-    } else {
-        console.error("Incorrect gender specified for setSex");
-    }
-}
-
-function defaultMaleState() {
-    // TODO Set in JSON
-    setBodyByName("male_body_1_head_1");
-
-    updateDebugDisplay();
-}
-
-function defaultFemaleState() {
-    // TODO Set in JSON
-    setBodyByName("female_body_1_head_1");
-
-    updateDebugDisplay();
+    setBodyByComponents()
 }
 
 function defaultItems() {
@@ -376,19 +326,23 @@ function defaultItems() {
     }
 }
 
-function setBodyByNumbers() {
-    let body_name = `${curSex}_body_${curBodyNumber}_head_${curHeadNumber}`;
+function getBodyNameByComponents() {
+    return `${curSex}_body_${curBodyNumber}_head_${curHeadNumber}`;
+}
+
+function setBodyByComponents() {
+    let body_name = getBodyNameByComponents();
     setBodyByName(body_name);
 }
 
 function setBodyByBodyNumber(body_number) {
     curBodyNumber = body_number;
-    setBodyByNumbers();
+    setBodyByComponents();
 }
 
 function setBodyByHeadNumber(head_number) {
     curHeadNumber = head_number;
-    setBodyByNumbers();
+    setBodyByComponents();
 }
 
 function setBodyByName(body_name) {
@@ -513,7 +467,7 @@ function setSkinByName(skin_name) {
                             body_object.material.map.flipY = false;
                             body_object.material.map.encoding = THREE.sRGBEncoding;
 
-                            // TODO: Note here that inv_data and name is same for all 3 skins
+                            // Note here that inv_data and name is same for all 3 skins
                             // in a body but we only need to save 1 copy and a body requires
                             // all 3 textures to be present
                             body_object.material.userData.inv_data = inv_data;
@@ -615,7 +569,9 @@ function publishInvData() {
 }
 
 function initWebGL(loaded_data) {
-    console.log(`three.js: ${THREE.REVISION}`);
+    if (devMode) {
+        console.log(`three.js: ${THREE.REVISION}`);
+    }
 
     const container = document.getElementById("container");
 
@@ -682,42 +638,51 @@ function initWebGL(loaded_data) {
 
 function startApp() {
     loadConfig(configFilename).then((config_data) => {
-        console.log("Loaded configuration data:", config_data);
+        if (devMode) {
+            console.log("Loaded configuration data:", config_data);
+        }
 
-        let default_body_name = "male_body_1_head_1"; // todo: get from JSON
+        // pick up initial settings from JSON data file
+        curSex = config_data.settings.defaultSex;
+        curBodyNumber = config_data.settings.defaultBodyNumber
+        curHeadNumber  = config_data.settings.defaultHeadNumber
+
+        // generate the default body name to look for and load first
+        let default_body_name = getBodyNameByComponents();
+
         loadBodyandItems(config_data, default_body_name)
             .then((loaded_data) => {
-                //console.log(`Loaded all data for ${default_body_name}`);
                 initWebGL(config_data);
                 addToScene(loaded_data);
 
-                setSex(maleSex);
+                // TODO: rename to setBodyByCompontents() or something
+                setBodyByComponents()
 
-                // comment here and do not call it a map
-                let loadMap = [];
+                // Build a list of bodies (other than the default) that
+                // will be loaded in the background - this is an inelegant
+                // way of dealing with the asynchronous nature of the promise
+                // based loading when we have to know when the loading is complete.
+                // (Observing the three.js Loader Manager is not sufficient)
+                let bodiesToLoad = [];
                 config_data.bodies.forEach(function (body) {
                     if (body.name != default_body_name) {
-                        loadMap.push(body.name);
+                        bodiesToLoad.push(body.name);
                     }
                 });
-
-                //console.log(`Default state set - now load rest of ${loadMap.length} items`);
 
                 showDiv("loading", true);
 
                 config_data.bodies.forEach(function (body) {
                     if (body.name != default_body_name) {
-                        //console.log("Background loading rest of bodies: ", body);
-
                         loadBodyandItems(config_data, body.name)
                             .then((loaded_data) => {
-                                //console.log(`Loaded all data for ${default_body_name}`);
                                 addToScene(loaded_data);
 
-                                // TODO: Add a comment about this and why it's not really needed
-                                // it filters out loaded item from list so we can test when 0 entries
-                                loadMap = loadMap.filter((e) => e !== body.name);
-                                if (loadMap.length == 0) {
+                                // Remove the body name we just just loaded from the
+                                // list and when the list is empty, switch the loading and
+                                // the controls DIVs because we are ready to proceed
+                                bodiesToLoad = bodiesToLoad.filter((e) => e !== body.name);
+                                if (bodiesToLoad.length == 0) {
                                     showDiv("loading", false);
                                     showDiv("controls", true);
                                 }
