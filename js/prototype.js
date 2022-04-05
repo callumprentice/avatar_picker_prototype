@@ -23,8 +23,13 @@ window.setBodyByHeadNumber = setBodyByHeadNumber;
 window.setSkinByName = setSkinByName;
 window.publishInvData = publishInvData;
 
+// flag for developer mode - turns on various debugging aids
 const devMode = false;
+
+// the name of the JSON file containing data about bodies, items, skins etc.
 const configFilename = "data.json";
+
+// constants used in various place instrad of literals
 const femaleSex = "female";
 const maleSex = "male";
 const bodyCategory = "body";
@@ -32,6 +37,8 @@ const itemCategory = "item";
 const lowerLocation = "lower";
 const upperLocation = "upper";
 const headLocation = "head";
+
+// variables containing current state
 let selectedBodyName;
 let curSex;
 let curBodyNumber;
@@ -40,27 +47,31 @@ let defaultMaleItems;
 let defaultMaleSkin;
 let defaultFemaleItems;
 let defaultFemaleSkin;
+let skinTextureMap = new Map();
 
+// misc three.js variables (unrealted to avatar itself)
 let scene, renderer, camera;
 let clock = new THREE.Clock();
 let animationMixers = [];
 const manager = new THREE.LoadingManager();
 const gltfLoader = new GLTFLoader(manager);
 const textureLoader = new THREE.TextureLoader(manager);
-let skinTextureMap = new Map();
 
+// called when the three.js loader manager starts to download files
 manager.onStart = function (url, itemsLoaded, itemsTotal) {
     if (devMode) {
         console.log(`Started loading data`);
     }
 };
 
+// called when the three.js loader manager completes downloading files
 manager.onLoad = function () {
     if (devMode) {
         console.log(`Loading complete`);
     }
 };
 
+// called when the three.js loader manager indicates progres (noisy!)
 manager.onProgress = function (url, itemsLoaded, itemsTotal) {
     if (devMode) {
         let percent_loaded = parseInt((itemsLoaded * 100) / itemsTotal);
@@ -68,13 +79,20 @@ manager.onProgress = function (url, itemsLoaded, itemsTotal) {
     }
 };
 
+// called when the three.js loader manager encounters an error
+// typically when a file cannot be loaded
 manager.onError = function (url) {
     if (devMode) {
         console.error("There was an error loading " + url);
     }
 };
 
+// update the display used in dev mode that shows current
+// body name, item names, skin name and more
 function updateDebugDisplay() {
+
+    // Turn off if we are not in dev mode
+    // Consider removing code altogether for production
     if (devMode == false) {
         return;
     }
@@ -84,6 +102,8 @@ function updateDebugDisplay() {
     let el = document.getElementById("debug_display");
     let debug_str = `<em>Debug Data:</em><br>`;
 
+    // look through the three.js scenegraph and extract the
+    // relevant visible items then display them
     scene.traverse(function (object) {
         if (object.userData.category != undefined) {
             if (object.userData.category == bodyCategory) {
@@ -109,6 +129,7 @@ function updateDebugDisplay() {
     el.innerHTML = debug_str;
 }
 
+// load the JSON data file - returns a promise
 async function loadConfig(filename) {
     let response = await fetch(filename);
     let data = await response.json();
@@ -116,6 +137,8 @@ async function loadConfig(filename) {
     return data;
 }
 
+// load files using the three.js loader manager, a named loader
+// then return the payload as well as other data - returns a promise
 const loadAsync = (loader, url, name, category, location, inv_data) => {
     return new Promise((resolve) => {
         loader.load(url, (payload) => {
@@ -130,6 +153,8 @@ const loadAsync = (loader, url, name, category, location, inv_data) => {
     });
 };
 
+// returns an "Item" in the JSON config file
+// using its name as a lookup
 function getItemByName(config_data, name) {
     let item_data;
 
@@ -144,6 +169,8 @@ function getItemByName(config_data, name) {
     return item_data;
 }
 
+// returns a "Skin" in the JSON config file
+// using its name as a lookup
 function getSkinByName(config_data, name) {
     let skin_data;
 
@@ -158,15 +185,20 @@ function getSkinByName(config_data, name) {
     return skin_data;
 }
 
-async function loadBodyandItems(config_data, name) {
+// loads the body, the associated items and skins for a named body
+async function loadBodyItemsSkins(config_data, name) {
     let loaders = [];
 
+    // look through list of bodies in the JSON file for the one we want
     config_data.bodies.every(function (body) {
         if (body.name == name) {
+            // load it
             loaders.push(loadAsync(gltfLoader, body.filename, body.name, body.category, "", body.inv_data));
 
+            // look through the list of items in the JSON file for this body
             body.items.forEach(function (item) {
                 let item_data = getItemByName(config_data, item);
+                // load them
                 loaders.push(
                     loadAsync(
                         gltfLoader,
@@ -179,9 +211,11 @@ async function loadBodyandItems(config_data, name) {
                 );
             });
 
+            // look through the list of skins in the JSON file for this body
             body.skins.forEach(function (skin) {
                 let skin_data = getSkinByName(config_data, skin);
 
+                // if we haven't seen this skin yet, then save it
                 if (skinTextureMap.has(skin_data.name) == false) {
                     let lower_texture = textureLoader.load(skin_data.lower);
                     lower_texture.flipY = true;
@@ -192,6 +226,8 @@ async function loadBodyandItems(config_data, name) {
 
                     let inv_data = skin_data.inv_data;
 
+                    // save textures for upper/lower body, head and
+                    // the inventory data that will be used in the viewer
                     skinTextureMap.set(skin_data.name, {
                         lower: lower_texture,
                         upper: upper_texture,
@@ -210,7 +246,10 @@ async function loadBodyandItems(config_data, name) {
     return await Promise.all(loaders);
 }
 
+// Main code that adds things to the three.js scenegraph.
 function addToScene(loaded_data) {
+
+    // Look through the loaded data for a body
     let body_data;
     loaded_data.every(function (each) {
         if (each.category == bodyCategory) {
@@ -220,11 +259,14 @@ function addToScene(loaded_data) {
         return true;
     });
 
+    // did not find a body here - there should always be one - bail
     if (body_data == undefined) {
         console.error(`Unable to load body and items for ${name}`);
         return;
     }
 
+    // extract the GLTF file and create a compatible three.js
+    // rigged model using SkeletonUtils
     let body_gltf = body_data.payload;
     let body_model = SkeletonUtils.clone(body_gltf.scene);
 
@@ -232,9 +274,11 @@ function addToScene(loaded_data) {
     let animation_mixer;
     let animation_clip;
 
+    // create animation group and mixer for this body
     animation_object_group = new THREE.AnimationObjectGroup(body_model);
     animation_mixer = new THREE.AnimationMixer(animation_object_group);
 
+    // "Play" the animation in the body GLTF file - one *must* be present
     if (body_gltf.animations.length > 0) {
         animation_clip = body_gltf.animations[0];
         animation_mixer.clipAction(animation_clip).play();
@@ -243,6 +287,8 @@ function addToScene(loaded_data) {
         return;
     }
 
+    // collect the skeleton from the body - we will use it to update
+    // the skeleton of items when they are loaded later on
     let body_skeleton;
     body_model.traverse(function (object) {
         if (object.isSkinnedMesh) {
@@ -250,12 +296,15 @@ function addToScene(loaded_data) {
         }
     });
 
+    // hide it, set some metadata and add to scenegraph
     body_model.visible = false;
     body_model.userData.name = body_data.name;
     body_model.userData.category = body_data.category;
     body_model.userData.inv_data = body_data.inv_data;
     scene.add(body_model);
 
+    // look through the data that was loaded for items - same
+    // kinds of things happen as for the body above (see comments there)
     loaded_data.forEach(function (each) {
         if (each.category == itemCategory) {
             let item_gltf = each.payload;
@@ -268,6 +317,10 @@ function addToScene(loaded_data) {
             item_model.userData.location = each.location;
             item_model.userData.inv_data = each.inv_data;
 
+            // this is specific to items - we use the body skeleton we saved
+            // earlier to update the skeleton position/scale/rotation of the
+            // item skeleton - needed to make three.js do the right thing
+            // with a rigged mesh
             item_model.traverse(function (object) {
                 if (object.isSkinnedMesh) {
                     // Here we copy over the position, rotation & scale from
@@ -284,8 +337,10 @@ function addToScene(loaded_data) {
                 }
             });
 
+            // add each item to the animation group
             animation_object_group.add(item_model);
 
+            // add it to the three.js scenegraph (hidden)
             scene.add(item_model);
         }
     });
@@ -293,6 +348,8 @@ function addToScene(loaded_data) {
     animationMixers.push(animation_mixer);
 }
 
+// sets the current sex of the avatar - call from HTML code when
+// the sex changes - initial value is read from JSON file
 function setSex(sex) {
     if (sex == curSex) {
         return;
@@ -303,6 +360,8 @@ function setSex(sex) {
     setBodyByComponents();
 }
 
+// adds the default items to display for each sex
+// via the JSON config file
 function defaultItems() {
     if (curSex == maleSex) {
         defaultMaleItems.forEach(function (each) {
@@ -319,25 +378,32 @@ function defaultItems() {
     }
 }
 
+// builds the name of a body using sex, body number and head number
 function getBodyNameByComponents() {
     return `${curSex}_body_${curBodyNumber}_head_${curHeadNumber}`;
 }
 
+// set a new body based on the sex, body number and head number components
 function setBodyByComponents() {
     let body_name = getBodyNameByComponents();
     setBodyByName(body_name);
 }
 
+// set a new body solely based on the body number
 function setBodyByBodyNumber(body_number) {
     curBodyNumber = body_number;
     setBodyByComponents();
 }
 
+// set a new body solely based on the head number
 function setBodyByHeadNumber(head_number) {
     curHeadNumber = head_number;
     setBodyByComponents();
 }
 
+// set a body directly by name.  Note - this function is called
+// by many others after composing the body name from the various
+// components - you most likely do not want to call this yourself
 function setBodyByName(body_name) {
     removeAllItems();
 
@@ -364,6 +430,7 @@ function setBodyByName(body_name) {
     updateDebugDisplay();
 }
 
+// remove all items from the scene
 function removeAllItems() {
     scene.traverse(function (object) {
         if (object.userData.category == itemCategory) {
@@ -372,6 +439,7 @@ function removeAllItems() {
     });
 }
 
+// remove an item by name from the scene
 function remItemByName(item_name) {
     let found = false;
 
@@ -388,9 +456,12 @@ function remItemByName(item_name) {
         console.warn(`remItemByName - unable to find item ${item_name}`);
     }
 
+    // check to see if the current settings are "complete" and they
+    // are allowed to continue to the next step
     checkCompleteness();
 }
 
+// display an item directly using its name
 function setItemByName(item_name) {
     let item_object;
     scene.traverse(function (object) {
@@ -418,11 +489,15 @@ function setItemByName(item_name) {
         }
     });
 
+    // check to see if the current settings are "complete" and they
+    // are allowed to continue to the next step
     checkCompleteness();
 
     updateDebugDisplay();
 }
 
+// remove an item from the scene based on its location on the body
+// such as lower or upper location
 function remItemByLocation(item_location) {
     let found = false;
 
@@ -444,6 +519,7 @@ function remItemByLocation(item_location) {
     updateDebugDisplay();
 }
 
+// set a body skin directly using its name defined in the JSON file
 function setSkinByName(skin_name) {
     let lower = skinTextureMap.get(skin_name).lower;
     let upper = skinTextureMap.get(skin_name).upper;
@@ -487,6 +563,10 @@ function setSkinByName(skin_name) {
     }
 }
 
+// check if the current settings are "complete" and the user
+// is allowed to continue to the next stage - this may need
+// more work but for example, currently the avatar needs
+// a shirt and pants to proceed but other heuristics could be added
 function checkCompleteness() {
     let body_selected = false;
     let item_lower_selected = false;
@@ -522,6 +602,8 @@ function checkCompleteness() {
     }
 }
 
+// show or hide a div - used to hide/show items like loading,
+// debug/dev mode and continue UI panels
 function showDiv(elname, show) {
     let element = document.getElementById(elname);
     if (element != undefined) {
@@ -533,6 +615,11 @@ function showDiv(elname, show) {
     }
 }
 
+// boilerplate function that builds a list of visible items then uses
+// that to create a blob of JSON. Ultimately, this is what will be
+// used to send data to a server to tell it what inventory data to
+// copy across so the user ends up with an avatar that looks the same
+// as the one they configured when they start Second Life
 function publishInvData() {
     let inv_paths = [];
 
@@ -564,6 +651,7 @@ function publishInvData() {
     console.log("JSON data representing the selected items:", json_data);
 }
 
+// three.js boilerplate initialztion code
 function initWebGL(loaded_data) {
     if (devMode) {
         console.log(`three.js: ${THREE.REVISION}`);
@@ -634,7 +722,10 @@ function initWebGL(loaded_data) {
     updateDebugDisplay();
 }
 
+// entry point for the application - call to this at bottom of file
 function startApp() {
+
+    // load the JSON config data file
     loadConfig(configFilename).then((config_data) => {
         if (devMode) {
             console.log("Loaded configuration data:", config_data);
@@ -652,9 +743,14 @@ function startApp() {
         // generate the default body name to look for and load first
         let default_body_name = getBodyNameByComponents();
 
-        loadBodyandItems(config_data, default_body_name)
+        // load the default body and its items
+        loadBodyItemsSkins(config_data, default_body_name)
             .then((loaded_data) => {
+
+                // now we have the first body so we can initialize WebGL/three.js
                 initWebGL(config_data);
+
+                // add the body/items etc. to the newly initialized scene
                 addToScene(loaded_data);
 
                 // initial state using previously set sex, body, head components
@@ -672,11 +768,14 @@ function startApp() {
                     }
                 });
 
+                // show a simple panel to indicate we are waiting for something to load
                 showDiv("loading", true);
 
+                // load all the other bodies now that the default one is loaded
+                // and the scene is interactive
                 config_data.bodies.forEach(function (body) {
                     if (body.name != default_body_name) {
-                        loadBodyandItems(config_data, body.name)
+                        loadBodyItemsSkins(config_data, body.name)
                             .then((loaded_data) => {
                                 addToScene(loaded_data);
 
@@ -702,4 +801,5 @@ function startApp() {
     });
 }
 
+// kick things off
 startApp();

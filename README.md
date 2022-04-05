@@ -15,6 +15,14 @@
 
 * body referenced by SEX BODY_NUMBER _ HEAD_NUMBER
 
+* define items
+
+* define skins
+
+* mention inv data - what it is and how to use it
+
+* mention animation_object_group  & animation_mixer
+
 * Deal with hiding/showing loading DIVs
     showDiv("loading", false);
     showDiv("controls", true);
