@@ -2,7 +2,14 @@ body {
     margin: 0;
     display: block;
     font-family: "Roboto";
+    background: linear-gradient(
+        180deg,
+        rgba(136, 136, 136, 1) 0%,
+        rgba(170, 170, 170, 1) 15%,
+        rgba(255, 255, 255, 1) 100%
+    );
     font-size: 1em;
+    user-select: none;
 }
 
 a {
@@ -23,6 +30,26 @@ a {
     top: 0px;
     height: 128px;
     width: 128px;
+    visibility: hidden;
+}
+
+#debug_display {
+    position: absolute;
+    font-family: monospace;
+    width: 300px;
+    height: 200px;
+    border-radius: 15px;
+    border: 1px #666 solid;
+    margin: 8px;
+    vertical-align: top;
+    padding: 16px;
+    padding-top: 12px;
+    top: 8px;
+    right: 8px;
+    text-align: left;
+    color: white;
+    background-color: rgba(50, 150, 50, 0.15);
+    font-size: 1.1em;
     visibility: hidden;
 }
 
@@ -290,23 +317,4 @@ em {
 
 i {
     color: orange;
-}
-
-#debug_display {
-    position: absolute;
-    font-family: monospace;
-    width: 300px;
-    height: 200px;
-    border-radius: 15px;
-    border: 1px #666 solid;
-    margin: 8px;
-    vertical-align: top;
-    padding: 16px;
-    padding-top: 12px;
-    top: 8px;
-    right: 8px;
-    text-align: left;
-    color: white;
-    background-color: rgba(50, 150, 50, 0.15);
-    font-size: 1.1em;
 }

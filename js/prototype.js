@@ -16,7 +16,7 @@
 * define initial body name in JSON vs code (let initial_name = "male_body_1_head_1";)
     * also define defaultMaleState() and defaultFemaleState() in JSON
 
-* Ask Chronos to replace Legs.001/Torso.001 and Top/Bottom with upper/lower
+* Ask lowerLocationos to replace Legs.001/Torso.001 and Top/Bottom with upper/lower
 
 * look for TODOs
 
@@ -24,11 +24,8 @@
     * hair
     * shoes
 
-* make app look like steeltoe's prototype
-    * add graded shaded background
-    * remove platform avatar stands on
-
-* comment out or remove most of the console.log statements
+* implement DEBUG mode and remove crud when not in this mode
+    * comment out or remove most of the console.log statements
 
 * backup and clean out old code/functions from this file
 
@@ -71,6 +68,7 @@ window.setBodyByHeadNumber = setBodyByHeadNumber;
 window.setSkinByName = setSkinByName;
 window.publishInvData = publishInvData;
 
+const devMode = false;
 const configFilename = "data.json";
 const femaleSex = "female";
 const maleSex = "male";
@@ -78,6 +76,7 @@ const bodyCategory = "body";
 const itemCategory = "item";
 const lowerLocation = "lower";
 const upperLocation = "upper";
+const headLocation = "head";
 let selectedBodyName = "Waiting..";
 
 let curBodyNumber = "1"; // TODO: set from JSON
@@ -93,12 +92,11 @@ const textureLoader = new THREE.TextureLoader(manager);
 let skinTextureMap = new Map();
 
 manager.onStart = function (url, itemsLoaded, itemsTotal) {
-    console.log("Started loading data");
-    //console.log("Started loading file: " + url + ".\nLoaded " + itemsLoaded + " of " + itemsTotal + " files.");
+    console.log(`Started loading data`);
 };
 
 manager.onLoad = function () {
-    console.log("Loading complete");
+    console.log(`Loading complete`);
 };
 
 manager.onProgress = function (url, itemsLoaded, itemsTotal) {
@@ -111,8 +109,14 @@ manager.onError = function (url) {
 };
 
 function updateDebugDisplay() {
+    if (devMode == false) {
+        return;
+    }
+
+    showDiv('debug_display', true);
+
     let el = document.getElementById("debug_display");
-    let debug_str = "<em>Debug Data:</em><br>";
+    let debug_str = `<em>Debug Data:</em><br>`;
 
     scene.traverse(function (object) {
         if (object.userData.category != undefined) {
@@ -504,8 +508,7 @@ function setSkinByName(skin_name) {
             if (object.userData.name == selectedBodyName) {
                 object.traverse(function (body_object) {
                     if (body_object.isMesh) {
-
-                        if (body_object.material.name == "Legs.001" || body_object.material.name == "Bottom") {
+                        if (body_object.material.name == lowerLocation) {
                             body_object.material.map = lower;
                             body_object.material.map.flipY = false;
                             body_object.material.map.encoding = THREE.sRGBEncoding;
@@ -516,12 +519,12 @@ function setSkinByName(skin_name) {
                             body_object.material.userData.inv_data = inv_data;
                             body_object.material.userData.name = skin_name;
                         }
-                        if (body_object.material.name == "Torso.001" || body_object.material.name == "Top") {
+                        if (body_object.material.name == upperLocation) {
                             body_object.material.map = upper;
                             body_object.material.map.flipY = false;
                             body_object.material.map.encoding = THREE.sRGBEncoding;
                         }
-                        if (body_object.material.name == "head") {
+                        if (body_object.material.name == headLocation) {
                             body_object.material.map = head;
                             body_object.material.map.flipY = false;
                             body_object.material.map.encoding = THREE.sRGBEncoding;
@@ -563,9 +566,20 @@ function checkCompleteness() {
     });
 
     if (body_selected && item_lower_selected && item_upper_selected) {
-        document.getElementById("continue").style.visibility = "visible";
+        showDiv("continue", true);
     } else {
-        document.getElementById("continue").style.visibility = "hidden";
+        showDiv("continue", false);
+    }
+}
+
+function showDiv(elname, show) {
+    let element = document.getElementById(elname);
+    if (element != undefined) {
+        if (show) {
+            element.style.visibility = "visible";
+        } else {
+            element.style.visibility = "hidden";
+        }
     }
 }
 
@@ -606,12 +620,11 @@ function initWebGL(loaded_data) {
     const container = document.getElementById("container");
 
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10);
-    camera.position.set(0, 2.0, 1.2);
+    camera.position.set(0, 1.6, 1.2);
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x6666aa);
 
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.outputEncoding = THREE.sRGBEncoding;
@@ -625,7 +638,7 @@ function initWebGL(loaded_data) {
     controls.autoRotateSpeed = 0.635;
     controls.enableDamping = true;
     controls.dampingFactor = 0.1;
-    controls.target.set(0, 1.1, 0);
+    controls.target.set(0, 0.95, 0);
 
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
     hemiLight.position.set(0, 20, 0);
@@ -642,18 +655,6 @@ function initWebGL(loaded_data) {
     dirLight.shadow.camera.near = 0.1;
     dirLight.shadow.camera.far = 40;
     scene.add(dirLight);
-
-    const floor_geometry = new THREE.PlaneGeometry(2, 2);
-    const floor_material = new THREE.MeshPhongMaterial({
-        color: 0x666699,
-        depthWrite: false,
-    });
-    const floor_mesh = new THREE.Mesh(floor_geometry, floor_material);
-    floor_mesh.rotation.x = -Math.PI / 2;
-    floor_mesh.receiveShadow = true;
-    scene.add(floor_mesh);
-
-    scene.add(new THREE.GridHelper(2, 60, 0xff0000, 0xaa66aa));
 
     renderer.setAnimationLoop(function () {
         controls.update();
@@ -702,7 +703,7 @@ function startApp() {
 
                 //console.log(`Default state set - now load rest of ${loadMap.length} items`);
 
-                document.getElementById("loading").style.visibility = "visible";
+                showDiv("loading", true);
 
                 config_data.bodies.forEach(function (body) {
                     if (body.name != default_body_name) {
@@ -717,8 +718,8 @@ function startApp() {
                                 // it filters out loaded item from list so we can test when 0 entries
                                 loadMap = loadMap.filter((e) => e !== body.name);
                                 if (loadMap.length == 0) {
-                                    document.getElementById("loading").style.visibility = "hidden";
-                                    document.getElementById("controls").style.visibility = "visible";
+                                    showDiv("loading", false);
+                                    showDiv("controls", true);
                                 }
                             })
                             .catch((err) => {
