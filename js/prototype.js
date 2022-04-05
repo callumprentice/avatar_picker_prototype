@@ -8,17 +8,6 @@
  * @date April 2022
  */
 
-/*
- ============================== THING REMAINING ==============================
-* Hide continue until the controls are visible
-
-* look for TODOs
-
-* only let avatar rotate around Y axis
-
-* backup and clean out old code/functions in files (original.js etc.)
-*/
-
 import * as THREE from "./three.module.js";
 import { OrbitControls } from "./OrbitControls.js";
 import { GLTFLoader } from "./GLTFLoader.js";
@@ -47,6 +36,10 @@ let selectedBodyName;
 let curSex;
 let curBodyNumber;
 let curHeadNumber;
+let defaultMaleItems;
+let defaultMaleSkin;
+let defaultFemaleItems;
+let defaultFemaleSkin;
 
 let scene, renderer, camera;
 let clock = new THREE.Clock();
@@ -307,20 +300,20 @@ function setSex(sex) {
 
     curSex = sex;
 
-    setBodyByComponents()
+    setBodyByComponents();
 }
 
 function defaultItems() {
     if (curSex == maleSex) {
-        // TODO Set in JSON
-        setItemByName("male_shirt_1");
-        setItemByName("male_pants_1");
-        setSkinByName("male_skin_1");
+        defaultMaleItems.forEach(function (each) {
+            setItemByName(each);
+        });
+        setSkinByName(defaultMaleSkin);
     } else if (curSex == femaleSex) {
-        // TODO Set in JSON
-        setItemByName("female_shirt_1");
-        setItemByName("female_pants_1");
-        setSkinByName("female_skin_1");
+        defaultFemaleItems.forEach(function (each) {
+            setItemByName(each);
+        });
+        setSkinByName(defaultFemaleSkin);
     } else {
         console.error("Incorrect gender specified for defaultState");
     }
@@ -520,7 +513,10 @@ function checkCompleteness() {
     });
 
     if (body_selected && item_lower_selected && item_upper_selected) {
-        showDiv("continue", true);
+        let controls_visible = document.getElementById("controls").style.visibility;
+        if (controls_visible == "visible") {
+            showDiv("continue", true);
+        }
     } else {
         showDiv("continue", false);
     }
@@ -595,6 +591,8 @@ function initWebGL(loaded_data) {
     controls.enableDamping = true;
     controls.dampingFactor = 0.1;
     controls.target.set(0, 0.95, 0);
+    controls.minPolarAngle = Math.PI / 6;
+    controls.maxPolarAngle = (3 * Math.PI) / 4;
 
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
     hemiLight.position.set(0, 20, 0);
@@ -644,8 +642,12 @@ function startApp() {
 
         // pick up initial settings from JSON data file
         curSex = config_data.settings.defaultSex;
-        curBodyNumber = config_data.settings.defaultBodyNumber
-        curHeadNumber  = config_data.settings.defaultHeadNumber
+        curBodyNumber = config_data.settings.defaultBodyNumber;
+        curHeadNumber = config_data.settings.defaultHeadNumber;
+        defaultMaleItems = config_data.settings.defaultMaleItems;
+        defaultMaleSkin = config_data.settings.defaultMaleSkin;
+        defaultFemaleItems = config_data.settings.defaultFemaleItems;
+        defaultFemaleSkin = config_data.settings.defaultFemaleSkin;
 
         // generate the default body name to look for and load first
         let default_body_name = getBodyNameByComponents();
@@ -655,8 +657,8 @@ function startApp() {
                 initWebGL(config_data);
                 addToScene(loaded_data);
 
-                // TODO: rename to setBodyByCompontents() or something
-                setBodyByComponents()
+                // initial state using previously set sex, body, head components
+                setBodyByComponents();
 
                 // Build a list of bodies (other than the default) that
                 // will be loaded in the background - this is an inelegant
@@ -685,6 +687,7 @@ function startApp() {
                                 if (bodiesToLoad.length == 0) {
                                     showDiv("loading", false);
                                     showDiv("controls", true);
+                                    checkCompleteness();
                                 }
                             })
                             .catch((err) => {

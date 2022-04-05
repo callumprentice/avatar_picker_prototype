@@ -2,7 +2,11 @@
     "settings": {
         "defaultSex": "male",
         "defaultBodyNumber": "1",
-        "defaultHeadNumber": "1"
+        "defaultHeadNumber": "1",
+        "defaultMaleItems": ["male_shirt_1", "male_pants_1"],
+        "defaultMaleSkin": "male_skin_1",
+        "defaultFemaleItems": ["female_shirt_1", "female_pants_1"],
+        "defaultFemaleSkin": "female_skin_1"
     },
     "bodies": [
         {
@@ -16,16 +20,8 @@
                 }
             },
             "filename": "./test_assets/male/bodies/male_body_1_head_1.glb",
-            "items": [
-                "male_shirt_1",
-                "male_shirt_2",
-                "male_pants_1",
-                "male_pants_2"
-            ],
-            "skins": [
-                "male_skin_1",
-                "male_skin_2"
-            ]
+            "items": ["male_shirt_1", "male_shirt_2", "male_pants_1", "male_pants_2"],
+            "skins": ["male_skin_1", "male_skin_2"]
         },
         {
             "name": "male_body_1_head_2",
@@ -38,16 +34,8 @@
                 }
             },
             "filename": "./test_assets/male/bodies/male_body_1_head_2.glb",
-            "items": [
-                "male_shirt_1",
-                "male_shirt_2",
-                "male_pants_1",
-                "male_pants_2"
-            ],
-            "skins": [
-                "male_skin_1",
-                "male_skin_2"
-            ]
+            "items": ["male_shirt_1", "male_shirt_2", "male_pants_1", "male_pants_2"],
+            "skins": ["male_skin_1", "male_skin_2"]
         },
         {
             "name": "male_body_2_head_1",
@@ -60,16 +48,8 @@
                 }
             },
             "filename": "./test_assets/male/bodies/male_body_2_head_1.glb",
-            "items": [
-                "male_shirt_1",
-                "male_shirt_2",
-                "male_pants_1",
-                "male_pants_2"
-            ],
-            "skins": [
-                "male_skin_1",
-                "male_skin_2"
-            ]
+            "items": ["male_shirt_1", "male_shirt_2", "male_pants_1", "male_pants_2"],
+            "skins": ["male_skin_1", "male_skin_2"]
         },
         {
             "name": "male_body_2_head_2",
@@ -82,16 +62,8 @@
                 }
             },
             "filename": "./test_assets/male/bodies/male_body_2_head_2.glb",
-            "items": [
-                "male_shirt_1",
-                "male_shirt_2",
-                "male_pants_1",
-                "male_pants_2"
-            ],
-            "skins": [
-                "male_skin_1",
-                "male_skin_2"
-            ]
+            "items": ["male_shirt_1", "male_shirt_2", "male_pants_1", "male_pants_2"],
+            "skins": ["male_skin_1", "male_skin_2"]
         },
         {
             "name": "male_body_3_head_1",
@@ -104,16 +76,8 @@
                 }
             },
             "filename": "./test_assets/male/bodies/male_body_3_head_1.glb",
-            "items": [
-                "male_shirt_1",
-                "male_shirt_2",
-                "male_pants_1",
-                "male_pants_2"
-            ],
-            "skins": [
-                "male_skin_1",
-                "male_skin_2"
-            ]
+            "items": ["male_shirt_1", "male_shirt_2", "male_pants_1", "male_pants_2"],
+            "skins": ["male_skin_1", "male_skin_2"]
         },
         {
             "name": "female_body_1_head_1",
@@ -126,16 +90,8 @@
                 }
             },
             "filename": "./test_assets/female/bodies/female_body_1_head_1.glb",
-            "items": [
-                "female_shirt_1",
-                "female_shirt_2",
-                "female_pants_1",
-                "female_pants_2"
-            ],
-            "skins": [
-                "female_skin_1",
-                "female_skin_2"
-            ]
+            "items": ["female_shirt_1", "female_shirt_2", "female_pants_1", "female_pants_2"],
+            "skins": ["female_skin_1", "female_skin_2"]
         },
         {
             "name": "female_body_1_head_2",
@@ -148,16 +104,8 @@
                 }
             },
             "filename": "./test_assets/female/bodies/female_body_1_head_2.glb",
-            "items": [
-                "female_shirt_1",
-                "female_shirt_2",
-                "female_pants_1",
-                "female_pants_2"
-            ],
-            "skins": [
-                "female_skin_1",
-                "female_skin_2"
-            ]
+            "items": ["female_shirt_1", "female_shirt_2", "female_pants_1", "female_pants_2"],
+            "skins": ["female_skin_1", "female_skin_2"]
         },
         {
             "name": "female_body_2_head_1",
@@ -170,16 +118,8 @@
                 }
             },
             "filename": "./test_assets/female/bodies/female_body_2_head_1.glb",
-            "items": [
-                "female_shirt_1",
-                "female_shirt_2",
-                "female_pants_1",
-                "female_pants_2"
-            ],
-            "skins": [
-                "female_skin_1",
-                "female_skin_2"
-            ]
+            "items": ["female_shirt_1", "female_shirt_2", "female_pants_1", "female_pants_2"],
+            "skins": ["female_skin_1", "female_skin_2"]
         },
         {
             "name": "female_body_2_head_2",
@@ -192,16 +132,8 @@
                 }
             },
             "filename": "./test_assets/female/bodies/female_body_2_head_2.glb",
-            "items": [
-                "female_shirt_1",
-                "female_shirt_2",
-                "female_pants_1",
-                "female_pants_2"
-            ],
-            "skins": [
-                "female_skin_1",
-                "female_skin_2"
-            ]
+            "items": ["female_shirt_1", "female_shirt_2", "female_pants_1", "female_pants_2"],
+            "skins": ["female_skin_1", "female_skin_2"]
         },
         {
             "name": "female_body_3_head_1",
@@ -214,16 +146,8 @@
                 }
             },
             "filename": "./test_assets/female/bodies/female_body_3_head_1.glb",
-            "items": [
-                "female_shirt_1",
-                "female_shirt_2",
-                "female_pants_1",
-                "female_pants_2"
-            ],
-            "skins": [
-                "female_skin_1",
-                "female_skin_2"
-            ]
+            "items": ["female_shirt_1", "female_shirt_2", "female_pants_1", "female_pants_2"],
+            "skins": ["female_skin_1", "female_skin_2"]
         }
     ],
     "items": [
