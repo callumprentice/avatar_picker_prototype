@@ -13,22 +13,13 @@
 
 
 
-* Disable body/head changes until rest of bodies loaded
-    * Tricky because of async nature
-
 * implement skins
     * consider loading 3 skins and attaching to userData in body
 
 * define initial body name in JSON vs code (let initial_name = "male_body_1_head_1";)
     * also define defaultMaleState() and defaultFemaleState() in JSON
 
-* add shadows back in everywhere
-
-* add code to produce JSON blob of INV data (see original.js)
-
-* only enable proceed when a full "set" is selected (body, shirt, pants) - what else?
-
-* Decide what to do when bodies change - currently removes all clothes
+* Ask Chronos to replace Legs.001/Torso.001 and Top/Bottom with upper/lower
 
 * look for TODOs
 
@@ -43,6 +34,8 @@
 * comment out or remove most of the console.log statements
 
 * backup and clean out old code/functions from this file
+
+* convert all " chars to ' ones
 
 * write README with
     * program design
@@ -61,7 +54,8 @@
     * Resulting body has default clothing
     * Something else?
 
-
+ * Should avatar float in space or have a platform like my prototype
+    * if just floating then i will remove shadows
 
 
 */
@@ -77,6 +71,7 @@ window.remItemByName = remItemByName;
 window.remItemByLocation = remItemByLocation;
 window.setBodyByBodyNumber = setBodyByBodyNumber;
 window.setBodyByHeadNumber = setBodyByHeadNumber;
+window.setSkinByName = setSkinByName;
 window.publishInvData = publishInvData;
 
 const configFilename = "data.json";
@@ -84,10 +79,8 @@ const femaleSex = "female";
 const maleSex = "male";
 const bodyCategory = "body";
 const itemCategory = "item";
-// const skinCategory = "skin";
 const lowerLocation = "lower";
 const upperLocation = "upper";
-// const headLocation = "head";
 let selectedBodyName = "Waiting..";
 
 let curBodyNumber = "1"; // TODO: set from JSON
@@ -99,18 +92,12 @@ let clock = new THREE.Clock();
 let animationMixers = [];
 const manager = new THREE.LoadingManager();
 const gltfLoader = new GLTFLoader(manager);
-//const textureLoader = new THREE.TextureLoader(manager);
+const textureLoader = new THREE.TextureLoader(manager);
+let skinTextureMap = new Map();
 
 manager.onStart = function (url, itemsLoaded, itemsTotal) {
-    console.log(
-        "Started loading file: " +
-            url +
-            ".\nLoaded " +
-            itemsLoaded +
-            " of " +
-            itemsTotal +
-            " files."
-    );
+    console.log("Started loading data");
+    //console.log("Started loading file: " + url + ".\nLoaded " + itemsLoaded + " of " + itemsTotal + " files.");
 };
 
 manager.onLoad = function () {
@@ -118,7 +105,7 @@ manager.onLoad = function () {
 };
 
 manager.onProgress = function (url, itemsLoaded, itemsTotal) {
-    let percent_loaded = parseInt((itemsLoaded * 100) / itemsTotal);
+    //let percent_loaded = parseInt((itemsLoaded * 100) / itemsTotal);
     //console.log(`Percent complete: ${percent_loaded}`);
 };
 
@@ -129,14 +116,20 @@ manager.onError = function (url) {
 function updateDebugDisplay() {
     let el = document.getElementById("debug_display");
     let debug_str = "<em>Debug Data:</em><br>";
-    // debug_str += `<i>body_name:</i> ${selectedBodyName}`;
 
     scene.traverse(function (object) {
-        // console.log(object.userData.category, "==>", object.userData.name);
         if (object.userData.category != undefined) {
             if (object.userData.category == bodyCategory) {
                 if (object.visible) {
                     debug_str += `<br><i>body_name:</i> ${object.userData.name}`;
+
+                    object.traverse(function (body_object) {
+                        if (body_object.isMesh) {
+                            if (body_object.material.userData.name != undefined) {
+                                debug_str += `<br><i>skin_name:</i> ${body_object.material.userData.name}`;
+                            }
+                        }
+                    });
                 }
             }
             if (object.userData.category == itemCategory) {
@@ -184,27 +177,31 @@ function getItemByName(config_data, name) {
     return item_data;
 }
 
+function getSkinByName(config_data, name) {
+    let skin_data;
+
+    config_data.skins.every(function (skin) {
+        if (skin.name == name) {
+            skin_data = skin;
+            return false;
+        }
+        return true;
+    });
+
+    return skin_data;
+}
+
 async function loadBodyandItems(config_data, name) {
     let loaders = [];
 
     config_data.bodies.every(function (body) {
         if (body.name == name) {
-            console.log(`Found match: ${name}`);
-            console.log(`Adding GLB file for the body to load list`);
-            loaders.push(
-                loadAsync(
-                    gltfLoader,
-                    body.filename,
-                    body.name,
-                    body.category,
-                    "",
-                    body.inv_data
-                )
-            );
+            //console.log(`Adding GLB file for the body to load list`);
+            loaders.push(loadAsync(gltfLoader, body.filename, body.name, body.category, "", body.inv_data));
 
             body.items.forEach(function (item) {
                 let item_data = getItemByName(config_data, item);
-                console.log("Adding item:", item_data.name);
+                //console.log("Adding item:", item_data.name);
                 loaders.push(
                     loadAsync(
                         gltfLoader,
@@ -217,6 +214,29 @@ async function loadBodyandItems(config_data, name) {
                 );
             });
 
+            body.skins.forEach(function (skin) {
+                let skin_data = getSkinByName(config_data, skin);
+                //console.log("Adding skin:", skin_data);
+
+                if (skinTextureMap.has(skin_data.name) == false) {
+                    let lower_texture = textureLoader.load(skin_data.lower);
+                    lower_texture.flipY = true;
+                    let upper_texture = textureLoader.load(skin_data.upper);
+                    upper_texture.flipY = true;
+                    let head_texture = textureLoader.load(skin_data.head);
+                    head_texture.flipY = true;
+
+                    let inv_data = skin_data.inv_data;
+
+                    skinTextureMap.set(skin_data.name, {
+                        lower: lower_texture,
+                        upper: upper_texture,
+                        head: head_texture,
+                        inv_data: inv_data,
+                    });
+                }
+            });
+
             return false;
         }
 
@@ -226,7 +246,7 @@ async function loadBodyandItems(config_data, name) {
     return await Promise.all(loaders);
 }
 
-function addToScene(name, loaded_data) {
+function addToScene(loaded_data) {
     let body_data;
     loaded_data.every(function (each) {
         if (each.category == bodyCategory) {
@@ -326,12 +346,14 @@ function setSex(sex) {
 }
 
 function defaultMaleState() {
+    // TODO Set in JSON
     setBodyByName("male_body_1_head_1");
 
     updateDebugDisplay();
 }
 
 function defaultFemaleState() {
+    // TODO Set in JSON
     setBodyByName("female_body_1_head_1");
 
     updateDebugDisplay();
@@ -339,11 +361,15 @@ function defaultFemaleState() {
 
 function defaultItems() {
     if (curSex == maleSex) {
+        // TODO Set in JSON
         setItemByName("male_shirt_1");
         setItemByName("male_pants_1");
+        setSkinByName("male_skin_1");
     } else if (curSex == femaleSex) {
+        // TODO Set in JSON
         setItemByName("female_shirt_1");
         setItemByName("female_pants_1");
+        setSkinByName("female_skin_1");
     } else {
         console.error("Incorrect gender specified for defaultState");
     }
@@ -403,10 +429,7 @@ function remItemByName(item_name) {
 
     scene.traverse(function (object) {
         if (object.userData.category == itemCategory) {
-            if (
-                object.userData.name == item_name &&
-                object.userData.body_name == selectedBodyName
-            ) {
+            if (object.userData.name == item_name && object.userData.body_name == selectedBodyName) {
                 found = true;
                 object.visible = false;
             }
@@ -417,18 +440,14 @@ function remItemByName(item_name) {
         console.warn(`remItemByName - unable to find item ${item_name}`);
     }
 
-    checkCompleteness()
-
+    checkCompleteness();
 }
 
 function setItemByName(item_name) {
     let item_object;
     scene.traverse(function (object) {
         if (object.userData.category == itemCategory) {
-            if (
-                object.userData.name == item_name &&
-                object.userData.body_name == selectedBodyName
-            ) {
+            if (object.userData.name == item_name && object.userData.body_name == selectedBodyName) {
                 item_object = object;
             }
         }
@@ -445,17 +464,13 @@ function setItemByName(item_name) {
                 object.visible = false;
             }
 
-            if (
-                object.userData.name == item_name &&
-                object.userData.body_name == selectedBodyName
-            ) {
+            if (object.userData.name == item_name && object.userData.body_name == selectedBodyName) {
                 object.visible = true;
-                console.warn(`setItemByName(${item_name} setting visible`);
             }
         }
     });
 
-    checkCompleteness()
+    checkCompleteness();
 
     updateDebugDisplay();
 }
@@ -473,16 +488,57 @@ function remItemByLocation(item_location) {
     });
 
     if (found == false) {
-        console.warn(
-            `remItemByLocation - unable to find location ${item_location}`
-        );
+        console.warn(`remItemByLocation - unable to find location ${item_location}`);
     }
 
-    checkCompleteness()
+    checkCompleteness();
 
     updateDebugDisplay();
 }
 
+function setSkinByName(skin_name) {
+    let lower = skinTextureMap.get(skin_name).lower;
+    let upper = skinTextureMap.get(skin_name).upper;
+    let head = skinTextureMap.get(skin_name).head;
+    let inv_data = skinTextureMap.get(skin_name).inv_data;
+
+    if (lower != undefined && upper != undefined && head != undefined) {
+        scene.traverse(function (object) {
+            if (object.userData.name == selectedBodyName) {
+                object.traverse(function (body_object) {
+                    if (body_object.isMesh) {
+
+                        if (body_object.material.name == "Legs.001" || body_object.material.name == "Bottom") {
+                            body_object.material.map = lower;
+                            body_object.material.map.flipY = false;
+                            body_object.material.map.encoding = THREE.sRGBEncoding;
+
+                            // TODO: Note here that inv_data and name is same for all 3 skins
+                            // in a body but we only need to save 1 copy and a body requires
+                            // all 3 textures to be present
+                            body_object.material.userData.inv_data = inv_data;
+                            body_object.material.userData.name = skin_name;
+                        }
+                        if (body_object.material.name == "Torso.001" || body_object.material.name == "Top") {
+                            body_object.material.map = upper;
+                            body_object.material.map.flipY = false;
+                            body_object.material.map.encoding = THREE.sRGBEncoding;
+                        }
+                        if (body_object.material.name == "head") {
+                            body_object.material.map = head;
+                            body_object.material.map.flipY = false;
+                            body_object.material.map.encoding = THREE.sRGBEncoding;
+                        }
+                    }
+                });
+            }
+        });
+
+        updateDebugDisplay();
+    } else {
+        console.warn(`setSkinByName: ${skin_name} is missing a texture`);
+    }
+}
 
 function checkCompleteness() {
     let body_selected = false;
@@ -498,7 +554,6 @@ function checkCompleteness() {
             }
             if (object.userData.category == itemCategory) {
                 if (object.visible) {
-
                     if (object.userData.location == lowerLocation) {
                         item_lower_selected = true;
                     }
@@ -511,23 +566,28 @@ function checkCompleteness() {
     });
 
     if (body_selected && item_lower_selected && item_upper_selected) {
-document.getElementById("continue").style.visibility = "visible";
+        document.getElementById("continue").style.visibility = "visible";
     } else {
-document.getElementById("continue").style.visibility = "hidden";
+        document.getElementById("continue").style.visibility = "hidden";
     }
 }
 
 function publishInvData() {
-        let inv_paths = [];
+    let inv_paths = [];
 
     scene.traverse(function (object) {
         if (object.userData.category != undefined) {
             if (object.userData.category == bodyCategory) {
                 if (object.visible) {
+                    inv_paths.push(object.userData.inv_data);
 
-            inv_paths.push(object.userData.inv_data);
-
-
+                    object.traverse(function (body_object) {
+                        if (body_object.isMesh) {
+                            if (body_object.material.userData.inv_data != undefined) {
+                                inv_paths.push(body_object.material.userData.inv_data);
+                            }
+                        }
+                    });
                 }
             }
             if (object.userData.category == itemCategory) {
@@ -540,23 +600,15 @@ function publishInvData() {
 
     let json_data = JSON.stringify(inv_paths);
 
-    console.log('JSON data representing the selected items:', json_data);
-
+    console.log("JSON data representing the selected items:", json_data);
 }
 
 function initWebGL(loaded_data) {
-    console.log("Initializing WebGL");
-
     console.log(`three.js: ${THREE.REVISION}`);
 
     const container = document.getElementById("container");
 
-    camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.01,
-        10
-    );
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10);
     camera.position.set(0, 2.0, 1.2);
 
     scene = new THREE.Scene();
@@ -632,17 +684,18 @@ function initWebGL(loaded_data) {
 
 function startApp() {
     loadConfig(configFilename).then((config_data) => {
-        console.warn("Loaded configuration data:", config_data);
+        console.log("Loaded configuration data:", config_data);
 
         let default_body_name = "male_body_1_head_1"; // todo: get from JSON
         loadBodyandItems(config_data, default_body_name)
             .then((loaded_data) => {
-                console.log(`Loaded all data for ${default_body_name}`);
+                //console.log(`Loaded all data for ${default_body_name}`);
                 initWebGL(config_data);
-                addToScene(default_body_name, loaded_data);
+                addToScene(loaded_data);
 
                 setSex(maleSex);
 
+                // comment here and do not call it a map
                 let loadMap = [];
                 config_data.bodies.forEach(function (body) {
                     if (body.name != default_body_name) {
@@ -650,39 +703,25 @@ function startApp() {
                     }
                 });
 
-                console.log(
-                    `Default state set - now load rest of ${loadMap.length} items`
-                );
+                //console.log(`Default state set - now load rest of ${loadMap.length} items`);
 
                 document.getElementById("loading").style.visibility = "visible";
 
                 config_data.bodies.forEach(function (body) {
                     if (body.name != default_body_name) {
-                        console.log(
-                            "Background loading rest of bodies: ",
-                            body
-                        );
+                        //console.log("Background loading rest of bodies: ", body);
 
                         loadBodyandItems(config_data, body.name)
                             .then((loaded_data) => {
-                                console.log(
-                                    `Loaded all data for ${default_body_name}`
-                                );
-                                addToScene(default_body_name, loaded_data);
+                                //console.log(`Loaded all data for ${default_body_name}`);
+                                addToScene(loaded_data);
 
                                 // TODO: Add a comment about this and why it's not really needed
                                 // it filters out loaded item from list so we can test when 0 entries
-                                loadMap = loadMap.filter(
-                                    (e) => e !== body.name
-                                );
+                                loadMap = loadMap.filter((e) => e !== body.name);
                                 if (loadMap.length == 0) {
-                                    console.warn("Rest of data is loaded");
-                                    document.getElementById(
-                                        "loading"
-                                    ).style.visibility = "hidden";
-                                    document.getElementById(
-                                        "controls"
-                                    ).style.visibility = "visible";
+                                    document.getElementById("loading").style.visibility = "hidden";
+                                    document.getElementById("controls").style.visibility = "visible";
                                 }
                             })
                             .catch((err) => {

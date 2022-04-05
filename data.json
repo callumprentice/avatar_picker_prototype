@@ -17,6 +17,10 @@
                 "male_shirt_2",
                 "male_pants_1",
                 "male_pants_2"
+            ],
+            "skins": [
+                "male_skin_1",
+                "male_skin_2"
             ]
         },
         {
@@ -35,6 +39,10 @@
                 "male_shirt_2",
                 "male_pants_1",
                 "male_pants_2"
+            ],
+            "skins": [
+                "male_skin_1",
+                "male_skin_2"
             ]
         },
         {
@@ -53,6 +61,10 @@
                 "male_shirt_2",
                 "male_pants_1",
                 "male_pants_2"
+            ],
+            "skins": [
+                "male_skin_1",
+                "male_skin_2"
             ]
         },
         {
@@ -71,6 +83,10 @@
                 "male_shirt_2",
                 "male_pants_1",
                 "male_pants_2"
+            ],
+            "skins": [
+                "male_skin_1",
+                "male_skin_2"
             ]
         },
         {
@@ -89,6 +105,10 @@
                 "male_shirt_2",
                 "male_pants_1",
                 "male_pants_2"
+            ],
+            "skins": [
+                "male_skin_1",
+                "male_skin_2"
             ]
         },
         {
@@ -107,6 +127,10 @@
                 "female_shirt_2",
                 "female_pants_1",
                 "female_pants_2"
+            ],
+            "skins": [
+                "female_skin_1",
+                "female_skin_2"
             ]
         },
         {
@@ -125,6 +149,10 @@
                 "female_shirt_2",
                 "female_pants_1",
                 "female_pants_2"
+            ],
+            "skins": [
+                "female_skin_1",
+                "female_skin_2"
             ]
         },
         {
@@ -143,6 +171,10 @@
                 "female_shirt_2",
                 "female_pants_1",
                 "female_pants_2"
+            ],
+            "skins": [
+                "female_skin_1",
+                "female_skin_2"
             ]
         },
         {
@@ -161,6 +193,10 @@
                 "female_shirt_2",
                 "female_pants_1",
                 "female_pants_2"
+            ],
+            "skins": [
+                "female_skin_1",
+                "female_skin_2"
             ]
         },
         {
@@ -179,6 +215,10 @@
                 "female_shirt_2",
                 "female_pants_1",
                 "female_pants_2"
+            ],
+            "skins": [
+                "female_skin_1",
+                "female_skin_2"
             ]
         }
     ],
@@ -283,9 +323,9 @@
     "skins": [
         {
             "name": "male_skin_1",
-            "lower": "./test_assets/male/skintones/light/lower.jpg",
-            "upper": "./test_assets/male/skintones/light/upper.jpg",
-            "head": "./test_assets/male/skintones/light/head.jpg",
+            "lower": "./test_assets/male/skins/m_lower_skin_1.jpg",
+            "upper": "./test_assets/male/skins/m_upper_skin_1.jpg",
+            "head": "./test_assets/male/skins/m_head_skin_1.jpg",
             "category": "skin",
             "inv_data": {
                 "sex": "male",
@@ -296,9 +336,9 @@
         },
         {
             "name": "male_skin_2",
-            "lower": "./test_assets/male/skintones/dark/lower.jpg",
-            "upper": "./test_assets/male/skintones/dark/upper.jpg",
-            "head": "./test_assets/male/skintones/dark/head.jpg",
+            "lower": "./test_assets/male/skins/m_lower_skin_2.jpg",
+            "upper": "./test_assets/male/skins/m_upper_skin_2.jpg",
+            "head": "./test_assets/male/skins/m_head_skin_2.jpg",
             "category": "skin",
             "inv_data": {
                 "sex": "male",
@@ -309,9 +349,9 @@
         },
         {
             "name": "female_skin_1",
-            "lower": "./test_assets/female/skintones/light/lower.jpg",
-            "upper": "./test_assets/female/skintones/light/upper.jpg",
-            "head": "./test_assets/female/skintones/light/head.jpg",
+            "lower": "./test_assets/female/skins/f_lower_skin_1.jpg",
+            "upper": "./test_assets/female/skins/f_upper_skin_1.jpg",
+            "head": "./test_assets/female/skins/f_head_skin_1.jpg",
             "category": "skin",
             "inv_data": {
                 "sex": "female",
@@ -322,9 +362,9 @@
         },
         {
             "name": "female_skin_2",
-            "lower": "./test_assets/female/skintones/dark/lower.jpg",
-            "upper": "./test_assets/female/skintones/dark/upper.jpg",
-            "head": "./test_assets/female/skintones/dark/head.jpg",
+            "lower": "./test_assets/female/skins/f_lower_skin_2.jpg",
+            "upper": "./test_assets/female/skins/f_upper_skin_2.jpg",
+            "head": "./test_assets/female/skins/f_head_skin_2.jpg",
             "category": "skin",
             "inv_data": {
                 "sex": "female",
